@@ -16,9 +16,19 @@ func (r *mutationResolver) CreateEpisode(ctx context.Context, input *model.NewEp
 	panic(fmt.Errorf("not implemented: CreateEpisode - createEpisode"))
 }
 
+// ModifyEpisode is the resolver for the modifyEpisode field.
+func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, data *model.NewEpisode) (*model.Episode, error) {
+	panic(fmt.Errorf("not implemented: ModifyEpisode - modifyEpisode"))
+}
+
 // Episodes is the resolver for the episodes field.
 func (r *queryResolver) Episodes(ctx context.Context, pagination *model.Pagination) ([]*model.Episode, error) {
 	panic(fmt.Errorf("not implemented: Episodes - episodes"))
+}
+
+// Users is the resolver for the users field.
+func (r *queryResolver) Users(ctx context.Context, pagination *model.Pagination) ([]*model.User, error) {
+	panic(fmt.Errorf("not implemented: Users - users"))
 }
 
 // Mutation returns MutationResolver implementation.

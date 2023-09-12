@@ -39,6 +39,7 @@ input Pagination {
 
 type Query {
   episodes(pagination: Pagination): [Episode!]!
+  users(pagination: Pagination): [User]!
 }
 
 input NewEpisode {
@@ -48,4 +49,5 @@ input NewEpisode {
 
 type Mutation {
   createEpisode(input: NewEpisode): Episode!
+  modifyEpisode(id: ID!, data: NewEpisode): Episode!
 }
