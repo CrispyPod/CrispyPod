@@ -1,0 +1,51 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Episode {
+  id: ID!
+  title: String!
+  createTime: Int!
+  description: String!
+  publishTime: Int
+  thumbnailFileName: String
+  thumbnailUploadName: String
+  audioFileName: String
+  audioFileUploadName: String
+  audioFileDuration: String
+  user: User!
+}
+
+type User {
+  id: ID!
+  createTime: Int!
+  email: String!
+  userName: String!
+  displayName: String!
+  isAdmin: Boolean!
+}
+
+type SiteConfig {
+  id: ID!
+  siteName: String!
+  siteDescription: String!
+  siteUrl: String!
+}
+
+input Pagination {
+  pageIndex: Int
+  perPage: Int
+}
+
+type Query {
+  episodes(pagination: Pagination): [Episode!]!
+}
+
+input NewEpisode {
+  title: String
+  description: String
+}
+
+type Mutation {
+  createEpisode(input: NewEpisode): Episode!
+}
