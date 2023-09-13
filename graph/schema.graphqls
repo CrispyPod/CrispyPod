@@ -42,10 +42,14 @@ input Credential {
   password: String!
 }
 
+type LoginData {
+  token: String!
+}
+
 type Query {
   episodes(pagination: Pagination): [Episode!]!
   users(pagination: Pagination): [User]!
-  login(credential: Credential): String!
+  login(credential: Credential): LoginData!
 }
 
 input NewEpisode {

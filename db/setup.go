@@ -1,10 +1,13 @@
 package db
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
+	"crispypod.com/crispypod/helpers"
 	"crispypod.com/crispypod/models"
+	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -29,6 +32,12 @@ func ConnectDatabase() {
 	err = db.AutoMigrate(&models.User{})
 	if err != nil {
 		panic(fmt.Sprintf("Failed to create User table: %s", err))
+	}
+
+	if err = db.First(&models.User{}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		password, _ := helpers.HashPassword("crispy.pod")
+		admin := models.User{UserName: "admin", Password: password, ID: uuid.New(), IsAdmin: true, DisplayName: "Admin", Email: "admin@crispypod.com"}
+		db.Create(&admin)
 	}
 
 	err = db.AutoMigrate(&models.Episode{})

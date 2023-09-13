@@ -59,6 +59,10 @@ type ComplexityRoot struct {
 		User                func(childComplexity int) int
 	}
 
+	LoginData struct {
+		Token func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CreateEpisode func(childComplexity int, input *model.NewEpisode) int
 		ModifyEpisode func(childComplexity int, id string, data *model.NewEpisode) int
@@ -94,7 +98,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Episodes(ctx context.Context, pagination *model.Pagination) ([]*model.Episode, error)
 	Users(ctx context.Context, pagination *model.Pagination) ([]*model.User, error)
-	Login(ctx context.Context, credential *model.Credential) (string, error)
+	Login(ctx context.Context, credential *model.Credential) (*model.LoginData, error)
 }
 
 type executableSchema struct {
@@ -188,6 +192,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Episode.User(childComplexity), true
+
+	case "LoginData.token":
+		if e.complexity.LoginData.Token == nil {
+			break
+		}
+
+		return e.complexity.LoginData.Token(childComplexity), true
 
 	case "Mutation.createEpisode":
 		if e.complexity.Mutation.CreateEpisode == nil {
@@ -1063,6 +1074,50 @@ func (ec *executionContext) fieldContext_Episode_user(ctx context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _LoginData_token(ctx context.Context, field graphql.CollectedField, obj *model.LoginData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LoginData_token(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LoginData_token(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LoginData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createEpisode(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createEpisode(ctx, field)
 	if err != nil {
@@ -1395,9 +1450,9 @@ func (ec *executionContext) _Query_login(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.LoginData)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNLoginData2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐLoginData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_login(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1407,7 +1462,11 @@ func (ec *executionContext) fieldContext_Query_login(ctx context.Context, field 
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "token":
+				return ec.fieldContext_LoginData_token(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LoginData", field.Name)
 		},
 	}
 	defer func() {
@@ -3959,6 +4018,45 @@ func (ec *executionContext) _Episode(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
+var loginDataImplementors = []string{"LoginData"}
+
+func (ec *executionContext) _LoginData(ctx context.Context, sel ast.SelectionSet, obj *model.LoginData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, loginDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LoginData")
+		case "token":
+			out.Values[i] = ec._LoginData_token(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -4676,6 +4774,20 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNLoginData2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐLoginData(ctx context.Context, sel ast.SelectionSet, v model.LoginData) graphql.Marshaler {
+	return ec._LoginData(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNLoginData2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐLoginData(ctx context.Context, sel ast.SelectionSet, v *model.LoginData) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LoginData(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

@@ -9,8 +9,10 @@ import (
 	"errors"
 	"fmt"
 
+	"crispypod.com/crispypod/db"
 	"crispypod.com/crispypod/graph/model"
 	"crispypod.com/crispypod/helpers"
+	"crispypod.com/crispypod/models"
 )
 
 // CreateEpisode is the resolver for the createEpisode field.
@@ -28,7 +30,6 @@ func (r *queryResolver) Episodes(ctx context.Context, pagination *model.Paginati
 	if userName := helpers.JWTFromContext(ctx); len(userName) == 0 {
 		return nil, errors.New("not authorized")
 	}
-	panic(fmt.Errorf("not implemented: Episodes - episodes"))
 }
 
 // Users is the resolver for the users field.
@@ -37,8 +38,18 @@ func (r *queryResolver) Users(ctx context.Context, pagination *model.Pagination)
 }
 
 // Login is the resolver for the login field.
-func (r *queryResolver) Login(ctx context.Context, credential *model.Credential) (string, error) {
-	panic(fmt.Errorf("not implemented: Login - login"))
+func (r *queryResolver) Login(ctx context.Context, credential *model.Credential) (*model.LoginData, error) {
+	var user models.User
+	if err := db.DB.Model(models.User{UserName: credential.UserName}).First(&user).Error; err != nil {
+		return nil, errors.New("user with provided credentials not found")
+	}
+	if helpers.CheckPasswordHash(credential.Password, user.Password) {
+		token, _ := helpers.GenerateJwt(user.UserName)
+		return &model.LoginData{
+			Token: token,
+		}, nil
+	}
+	return nil, errors.New("user with provided credentials not found")
 }
 
 // Mutation returns MutationResolver implementation.

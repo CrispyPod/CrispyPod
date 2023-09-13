@@ -21,6 +21,10 @@ type Episode struct {
 	User                *User   `json:"user"`
 }
 
+type LoginData struct {
+	Token string `json:"token"`
+}
+
 type NewEpisode struct {
 	Title       *string `json:"title,omitempty"`
 	Description *string `json:"description,omitempty"`
