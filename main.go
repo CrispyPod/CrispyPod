@@ -2,6 +2,7 @@ package main
 
 import (
 	"crispypod.com/crispypod/controllers"
+	"crispypod.com/crispypod/db"
 	"crispypod.com/crispypod/graph"
 	"crispypod.com/crispypod/helpers"
 
@@ -12,8 +13,10 @@ import (
 
 func main() {
 	helpers.CheckEnvVariables()
+	db.ConnectDatabase()
 
 	r := gin.Default()
+	r.Use(helpers.JWTMiddleWare())
 
 	pH := playground.Handler("GraphQL", "/graphql")
 	r.GET("/graphql", func(ctx *gin.Context) {
@@ -25,7 +28,7 @@ func main() {
 		gH.ServeHTTP(ctx.Writer, ctx.Request)
 	})
 
-	r.POST("/login",controllers.Login
+	r.POST("/login", controllers.Login)
 
 	r.Run()
 }

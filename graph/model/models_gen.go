@@ -2,6 +2,11 @@
 
 package model
 
+type Credential struct {
+	UserName string `json:"userName"`
+	Password string `json:"password"`
+}
+
 type Episode struct {
 	ID                  string  `json:"id"`
 	Title               string  `json:"title"`

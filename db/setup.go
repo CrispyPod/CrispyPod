@@ -20,7 +20,7 @@ func ConnectDatabase() {
 	if len(dbPort) == 0 {
 		dbPort = "5432"
 	}
-	var dbConnString = fmt.Sprintf("User ID=%s;Password=%s;Server=%s;Port=%s;Database=%s;Integrated Security=true;Pooling=true;", dbUser, dbPassword, dbHost, dbPort, dbName)
+	var dbConnString = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", dbHost, dbUser, dbPassword, dbName, dbPort)
 	db, err := gorm.Open(postgres.Open(dbConnString), &gorm.Config{})
 	if err != nil {
 		panic(fmt.Sprintf("Failed to connect to database: %s", err))

@@ -15,7 +15,7 @@ const (
 )
 
 type Episode struct {
-	ID            uuid.UUID `gorm:"type:uuid;default:gen_random_uuid(),primary_key"`
+	ID            uuid.UUID `gorm:"type:uuid;primary_key"`
 	Title         string
 	CreateTime    int64 `gorm:"autoCreateTime"`
 	PublishTime   time.Time

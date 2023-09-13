@@ -6,9 +6,11 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"crispypod.com/crispypod/graph/model"
+	"crispypod.com/crispypod/helpers"
 )
 
 // CreateEpisode is the resolver for the createEpisode field.
@@ -23,12 +25,20 @@ func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, data *m
 
 // Episodes is the resolver for the episodes field.
 func (r *queryResolver) Episodes(ctx context.Context, pagination *model.Pagination) ([]*model.Episode, error) {
+	if userName := helpers.JWTFromContext(ctx); len(userName) == 0 {
+		return nil, errors.New("not authorized")
+	}
 	panic(fmt.Errorf("not implemented: Episodes - episodes"))
 }
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, pagination *model.Pagination) ([]*model.User, error) {
 	panic(fmt.Errorf("not implemented: Users - users"))
+}
+
+// Login is the resolver for the login field.
+func (r *queryResolver) Login(ctx context.Context, credential *model.Credential) (string, error) {
+	panic(fmt.Errorf("not implemented: Login - login"))
 }
 
 // Mutation returns MutationResolver implementation.

@@ -37,9 +37,15 @@ input Pagination {
   perPage: Int
 }
 
+input Credential {
+  userName: String!
+  password: String!
+}
+
 type Query {
   episodes(pagination: Pagination): [Episode!]!
   users(pagination: Pagination): [User]!
+  login(credential: Credential): String!
 }
 
 input NewEpisode {
