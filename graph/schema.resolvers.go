@@ -27,9 +27,38 @@ func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, data *m
 
 // Episodes is the resolver for the episodes field.
 func (r *queryResolver) Episodes(ctx context.Context, pagination *model.Pagination) ([]*model.Episode, error) {
+	var episodes []models.Episode
+	var rtEpisodes []*model.Episode
 	if userName := helpers.JWTFromContext(ctx); len(userName) == 0 {
-		return nil, errors.New("not authorized")
+		err := db.DB.Model(models.Episode{EpisodeStatus: models.EpisodeStatus_Published}).
+			Scopes(helpers.Paginate(*pagination.PageIndex, *pagination.PerPage)).
+			Find(&episodes).Error
+		if err != nil {
+			return nil, errors.New("episodes not found")
+		}
+	} else {
+		if err := db.DB.Scopes(helpers.Paginate(*pagination.PageIndex, *pagination.PerPage)).Find(&episodes).Error; err != nil {
+			return nil, errors.New("episodes not found")
+		}
 	}
+	// Convert
+	for _, e := range episodes {
+		pt := new(int)
+		*pt = int(e.PublishTime.Unix())
+		rtEpisodes = append(rtEpisodes, &model.Episode{
+			ID:                  e.ID.String(),
+			Title:               e.Title,
+			CreateTime:          int(e.CreateTime),
+			Description:         e.Description,
+			PublishTime:         pt,
+			ThumbnailFileName:   &e.ThumbnailFileName.String,
+			ThumbnailUploadName: &e.ThumbnailUploadName.String,
+			AudioFileName:       &e.AudioFileName.String,
+			AudioFileUploadName: &e.AudioFileUploadName.String,
+			// AudioFileDuration:   e.AudioFileDuration.Int64,
+		})
+	}
+	return rtEpisodes, nil
 }
 
 // Users is the resolver for the users field.
