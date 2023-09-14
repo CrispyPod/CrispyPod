@@ -12,7 +12,7 @@ type Episode {
   thumbnailUploadName: String
   audioFileName: String
   audioFileUploadName: String
-  audioFileDuration: String
+  audioFileDuration: Int
   user: User!
 }
 

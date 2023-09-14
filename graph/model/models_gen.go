@@ -17,7 +17,7 @@ type Episode struct {
 	ThumbnailUploadName *string `json:"thumbnailUploadName,omitempty"`
 	AudioFileName       *string `json:"audioFileName,omitempty"`
 	AudioFileUploadName *string `json:"audioFileUploadName,omitempty"`
-	AudioFileDuration   *string `json:"audioFileDuration,omitempty"`
+	AudioFileDuration   *int    `json:"audioFileDuration,omitempty"`
 	User                *User   `json:"user"`
 }
 

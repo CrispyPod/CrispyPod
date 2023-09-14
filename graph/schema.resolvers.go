@@ -43,27 +43,37 @@ func (r *queryResolver) Episodes(ctx context.Context, pagination *model.Paginati
 	}
 	// Convert
 	for _, e := range episodes {
-		pt := new(int)
-		*pt = int(e.PublishTime.Unix())
-		rtEpisodes = append(rtEpisodes, &model.Episode{
-			ID:                  e.ID.String(),
-			Title:               e.Title,
-			CreateTime:          int(e.CreateTime),
-			Description:         e.Description,
-			PublishTime:         pt,
-			ThumbnailFileName:   &e.ThumbnailFileName.String,
-			ThumbnailUploadName: &e.ThumbnailUploadName.String,
-			AudioFileName:       &e.AudioFileName.String,
-			AudioFileUploadName: &e.AudioFileUploadName.String,
-			// AudioFileDuration:   e.AudioFileDuration.Int64,
-		})
+		rtEpisodes = append(rtEpisodes, e.ToGQLEpisode())
 	}
 	return rtEpisodes, nil
 }
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, pagination *model.Pagination) ([]*model.User, error) {
-	panic(fmt.Errorf("not implemented: Users - users"))
+	userName := helpers.JWTFromContext(ctx)
+	if len(userName) == 0 {
+		return nil, errors.New("authorization failed")
+	}
+
+	var dbJWTUser models.User
+	if err := db.DB.Model(&models.User{UserName: userName}).Find(&dbJWTUser).Error; err != nil {
+		return nil, errors.New(err.Error())
+	}
+	if !dbJWTUser.IsAdmin {
+		return nil, errors.New("user not to access this data")
+	}
+
+	var users []models.User
+	if err := db.DB.Find(&users).Error; err != nil {
+		return nil, errors.New(err.Error())
+	}
+
+	var rtUsers []*model.User
+	for _, u := range users {
+		rtUsers = append(rtUsers, u.ToGQLUser())
+	}
+	return rtUsers, nil
+
 }
 
 // Login is the resolver for the login field.
