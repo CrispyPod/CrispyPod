@@ -50,6 +50,8 @@ type Query {
   episodes(pagination: Pagination!): [Episode!]!
   users(pagination: Pagination!): [User]!
   login(credential: Credential!): LoginData!
+  me: User!
+  siteConfig: SiteConfig!
 }
 
 input NewEpisode {

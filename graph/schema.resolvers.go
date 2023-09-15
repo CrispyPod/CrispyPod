@@ -172,6 +172,38 @@ func (r *queryResolver) Login(ctx context.Context, credential model.Credential) 
 	return nil, errors.New("user with provided credentials not found")
 }
 
+// Me is the resolver for the me field.
+func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
+	userName := helpers.JWTFromContext(ctx)
+	if len(userName) == 0 {
+		return nil, errors.New("authorization failed")
+	}
+
+	var dbJWTUser models.User
+	if err := db.DB.Model(&models.User{UserName: userName}).Find(&dbJWTUser).Error; err != nil {
+		return nil, errors.New(err.Error())
+	}
+
+	return dbJWTUser.ToGQLUser(), nil
+
+}
+
+// SiteConfig is the resolver for the siteConfig field.
+func (r *queryResolver) SiteConfig(ctx context.Context) (*model.SiteConfig, error) {
+	var siteConfig models.SiteConfig
+	if err := db.DB.First(&siteConfig).Error; err != nil {
+		siteConfig = models.SiteConfig{
+			ID:              uuid.New(),
+			SiteName:        "CrispyPod",
+			SiteDescription: "Super awesome podcast!",
+			SiteUrl:         "https://crispypod.com",
+		}
+		db.DB.Create(&siteConfig)
+	}
+
+	return siteConfig.ToGQLSiteConfig(), nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 

@@ -50,5 +50,15 @@ func ConnectDatabase() {
 		panic(fmt.Sprintf("Failed to create SiteConfig table: %s", err))
 	}
 
+	if err = db.First(&models.SiteConfig{}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		siteConfig := models.SiteConfig{
+			ID:              uuid.New(),
+			SiteName:        "CrispyPod",
+			SiteDescription: "Super awesome podcast!",
+			SiteUrl:         "https://crispypod.com",
+		}
+		db.Create(&siteConfig)
+	}
+
 	DB = db
 }
