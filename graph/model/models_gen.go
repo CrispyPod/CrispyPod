@@ -26,13 +26,19 @@ type LoginData struct {
 }
 
 type NewEpisode struct {
-	Title       *string `json:"title,omitempty"`
-	Description *string `json:"description,omitempty"`
+	Title                   string  `json:"title"`
+	Description             string  `json:"description"`
+	EpisodeStatus           *int    `json:"episodeStatus,omitempty"`
+	AudioFileName           *string `json:"audioFileName,omitempty"`
+	AudioFileUploadName     *string `json:"audioFileUploadName,omitempty"`
+	AudioFileDuration       *int    `json:"audioFileDuration,omitempty"`
+	ThumbnailFileName       *string `json:"thumbnailFileName,omitempty"`
+	ThumbnailFileUploadName *string `json:"thumbnailFileUploadName,omitempty"`
 }
 
 type Pagination struct {
-	PageIndex *int `json:"pageIndex,omitempty"`
-	PerPage   *int `json:"perPage,omitempty"`
+	PageIndex int `json:"pageIndex"`
+	PerPage   int `json:"perPage"`
 }
 
 type SiteConfig struct {

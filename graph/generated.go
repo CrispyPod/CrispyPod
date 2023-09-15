@@ -65,13 +65,13 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreateEpisode func(childComplexity int, input *model.NewEpisode) int
-		ModifyEpisode func(childComplexity int, id string, data *model.NewEpisode) int
+		ModifyEpisode func(childComplexity int, id string, input *model.NewEpisode) int
 	}
 
 	Query struct {
-		Episodes func(childComplexity int, pagination *model.Pagination) int
-		Login    func(childComplexity int, credential *model.Credential) int
-		Users    func(childComplexity int, pagination *model.Pagination) int
+		Episodes func(childComplexity int, pagination model.Pagination) int
+		Login    func(childComplexity int, credential model.Credential) int
+		Users    func(childComplexity int, pagination model.Pagination) int
 	}
 
 	SiteConfig struct {
@@ -93,12 +93,12 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateEpisode(ctx context.Context, input *model.NewEpisode) (*model.Episode, error)
-	ModifyEpisode(ctx context.Context, id string, data *model.NewEpisode) (*model.Episode, error)
+	ModifyEpisode(ctx context.Context, id string, input *model.NewEpisode) (*model.Episode, error)
 }
 type QueryResolver interface {
-	Episodes(ctx context.Context, pagination *model.Pagination) ([]*model.Episode, error)
-	Users(ctx context.Context, pagination *model.Pagination) ([]*model.User, error)
-	Login(ctx context.Context, credential *model.Credential) (*model.LoginData, error)
+	Episodes(ctx context.Context, pagination model.Pagination) ([]*model.Episode, error)
+	Users(ctx context.Context, pagination model.Pagination) ([]*model.User, error)
+	Login(ctx context.Context, credential model.Credential) (*model.LoginData, error)
 }
 
 type executableSchema struct {
@@ -222,7 +222,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ModifyEpisode(childComplexity, args["id"].(string), args["data"].(*model.NewEpisode)), true
+		return e.complexity.Mutation.ModifyEpisode(childComplexity, args["id"].(string), args["input"].(*model.NewEpisode)), true
 
 	case "Query.episodes":
 		if e.complexity.Query.Episodes == nil {
@@ -234,7 +234,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Episodes(childComplexity, args["pagination"].(*model.Pagination)), true
+		return e.complexity.Query.Episodes(childComplexity, args["pagination"].(model.Pagination)), true
 
 	case "Query.login":
 		if e.complexity.Query.Login == nil {
@@ -246,7 +246,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Login(childComplexity, args["credential"].(*model.Credential)), true
+		return e.complexity.Query.Login(childComplexity, args["credential"].(model.Credential)), true
 
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
@@ -258,7 +258,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Users(childComplexity, args["pagination"].(*model.Pagination)), true
+		return e.complexity.Query.Users(childComplexity, args["pagination"].(model.Pagination)), true
 
 	case "SiteConfig.id":
 		if e.complexity.SiteConfig.ID == nil {
@@ -485,14 +485,14 @@ func (ec *executionContext) field_Mutation_modifyEpisode_args(ctx context.Contex
 	}
 	args["id"] = arg0
 	var arg1 *model.NewEpisode
-	if tmp, ok := rawArgs["data"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("data"))
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg1, err = ec.unmarshalONewEpisode2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐNewEpisode(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["data"] = arg1
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -514,10 +514,10 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_episodes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.Pagination
+	var arg0 model.Pagination
 	if tmp, ok := rawArgs["pagination"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
-		arg0, err = ec.unmarshalOPagination2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐPagination(ctx, tmp)
+		arg0, err = ec.unmarshalNPagination2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐPagination(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -529,10 +529,10 @@ func (ec *executionContext) field_Query_episodes_args(ctx context.Context, rawAr
 func (ec *executionContext) field_Query_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.Credential
+	var arg0 model.Credential
 	if tmp, ok := rawArgs["credential"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("credential"))
-		arg0, err = ec.unmarshalOCredential2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐCredential(ctx, tmp)
+		arg0, err = ec.unmarshalNCredential2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐCredential(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -544,10 +544,10 @@ func (ec *executionContext) field_Query_login_args(ctx context.Context, rawArgs 
 func (ec *executionContext) field_Query_users_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.Pagination
+	var arg0 model.Pagination
 	if tmp, ok := rawArgs["pagination"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
-		arg0, err = ec.unmarshalOPagination2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐPagination(ctx, tmp)
+		arg0, err = ec.unmarshalNPagination2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐPagination(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1211,7 +1211,7 @@ func (ec *executionContext) _Mutation_modifyEpisode(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ModifyEpisode(rctx, fc.Args["id"].(string), fc.Args["data"].(*model.NewEpisode))
+		return ec.resolvers.Mutation().ModifyEpisode(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.NewEpisode))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1290,7 +1290,7 @@ func (ec *executionContext) _Query_episodes(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Episodes(rctx, fc.Args["pagination"].(*model.Pagination))
+		return ec.resolvers.Query().Episodes(rctx, fc.Args["pagination"].(model.Pagination))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1369,7 +1369,7 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Users(rctx, fc.Args["pagination"].(*model.Pagination))
+		return ec.resolvers.Query().Users(rctx, fc.Args["pagination"].(model.Pagination))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1438,7 +1438,7 @@ func (ec *executionContext) _Query_login(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Login(rctx, fc.Args["credential"].(*model.Credential))
+		return ec.resolvers.Query().Login(rctx, fc.Args["credential"].(model.Credential))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3870,7 +3870,7 @@ func (ec *executionContext) unmarshalInputNewEpisode(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "description"}
+	fieldsInOrder := [...]string{"title", "description", "episodeStatus", "audioFileName", "audioFileUploadName", "audioFileDuration", "thumbnailFileName", "thumbnailFileUploadName"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3881,7 +3881,7 @@ func (ec *executionContext) unmarshalInputNewEpisode(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3890,11 +3890,65 @@ func (ec *executionContext) unmarshalInputNewEpisode(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Description = data
+		case "episodeStatus":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("episodeStatus"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EpisodeStatus = data
+		case "audioFileName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("audioFileName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AudioFileName = data
+		case "audioFileUploadName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("audioFileUploadName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AudioFileUploadName = data
+		case "audioFileDuration":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("audioFileDuration"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AudioFileDuration = data
+		case "thumbnailFileName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnailFileName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ThumbnailFileName = data
+		case "thumbnailFileUploadName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnailFileUploadName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ThumbnailFileUploadName = data
 		}
 	}
 
@@ -3919,7 +3973,7 @@ func (ec *executionContext) unmarshalInputPagination(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pageIndex"))
-			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			data, err := ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3928,7 +3982,7 @@ func (ec *executionContext) unmarshalInputPagination(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("perPage"))
-			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			data, err := ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4688,6 +4742,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNCredential2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐCredential(ctx context.Context, v interface{}) (model.Credential, error) {
+	res, err := ec.unmarshalInputCredential(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNEpisode2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐEpisode(ctx context.Context, sel ast.SelectionSet, v model.Episode) graphql.Marshaler {
 	return ec._Episode(ctx, sel, &v)
 }
@@ -4788,6 +4847,11 @@ func (ec *executionContext) marshalNLoginData2ᚖcrispypodᚗcomᚋcrispypodᚋg
 		return graphql.Null
 	}
 	return ec._LoginData(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPagination2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐPagination(ctx context.Context, v interface{}) (model.Pagination, error) {
+	res, err := ec.unmarshalInputPagination(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -5132,14 +5196,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalOCredential2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐCredential(ctx context.Context, v interface{}) (*model.Credential, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputCredential(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
 	if v == nil {
 		return nil, nil
@@ -5161,14 +5217,6 @@ func (ec *executionContext) unmarshalONewEpisode2ᚖcrispypodᚗcomᚋcrispypod�
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputNewEpisode(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOPagination2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐPagination(ctx context.Context, v interface{}) (*model.Pagination, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputPagination(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

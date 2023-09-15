@@ -8,36 +8,118 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"crispypod.com/crispypod/db"
 	"crispypod.com/crispypod/graph/model"
 	"crispypod.com/crispypod/helpers"
 	"crispypod.com/crispypod/models"
+	"github.com/google/uuid"
 )
 
 // CreateEpisode is the resolver for the createEpisode field.
 func (r *mutationResolver) CreateEpisode(ctx context.Context, input *model.NewEpisode) (*model.Episode, error) {
-	panic(fmt.Errorf("not implemented: CreateEpisode - createEpisode"))
+	userName := helpers.JWTFromContext(ctx)
+	if len(userName) == 0 {
+		return nil, errors.New("authorization failed")
+	}
+
+	var jwtDbUser models.User
+	if err := db.DB.Model(models.User{UserName: userName}).Find(&jwtDbUser).Error; err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	newEpisode := models.Episode{
+		ID:            uuid.New(),
+		Title:         input.Title,
+		Description:   input.Description,
+		EpisodeStatus: models.EpisodeStatus_Draft,
+		UserID:        jwtDbUser.ID,
+		CreateTime:    time.Now(),
+	}
+
+	if input.AudioFileName != nil {
+		newEpisode.AudioFileName.String = *input.AudioFileName
+	}
+
+	if input.AudioFileUploadName != nil {
+		newEpisode.AudioFileUploadName.String = *input.AudioFileUploadName
+	}
+
+	if input.AudioFileDuration != nil {
+		newEpisode.AudioFileDuration.Int64 = int64(*input.AudioFileDuration)
+	}
+
+	if input.ThumbnailFileName != nil {
+		newEpisode.ThumbnailFileName.String = *input.ThumbnailFileName
+	}
+
+	if input.ThumbnailFileUploadName != nil {
+		newEpisode.ThumbnailUploadName.String = *input.ThumbnailFileUploadName
+	}
+
+	db.DB.Create(newEpisode)
+
+	return newEpisode.ToGQLEpisode(), nil
 }
 
 // ModifyEpisode is the resolver for the modifyEpisode field.
-func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, data *model.NewEpisode) (*model.Episode, error) {
+func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *model.NewEpisode) (*model.Episode, error) {
+	userName := helpers.JWTFromContext(ctx)
+	if len(userName) == 0 {
+		return nil, errors.New("authorization failed")
+	}
+
+	var jwtDbUser models.User
+	if err := db.DB.Model(models.User{UserName: userName}).Find(&jwtDbUser).Error; err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	var dbEpisode models.Episode
+	if err := db.DB.Model(models.Episode{ID: uuid.Must(uuid.Parse(id))}).Find(&dbEpisode).Error; err != nil {
+		return nil, errors.New("episode not found")
+	}
+
+	dbEpisode.Title = input.Title
+	dbEpisode.Description = input.Description
+	dbEpisode.EpisodeStatus = models.EpisodeStatusType(*input.EpisodeStatus)
+
+	if input.AudioFileName != nil {
+		dbEpisode.AudioFileName.String = *input.AudioFileName
+	}
+
+	if input.AudioFileUploadName != nil {
+		dbEpisode.AudioFileUploadName.String = *input.AudioFileUploadName
+	}
+
+	if input.AudioFileDuration != nil {
+		dbEpisode.AudioFileDuration.Int64 = int64(*input.AudioFileDuration)
+	}
+
+	if input.ThumbnailFileName != nil {
+		dbEpisode.ThumbnailFileName.String = *input.ThumbnailFileName
+	}
+
+	if input.ThumbnailFileUploadName != nil {
+		dbEpisode.ThumbnailUploadName.String = *input.ThumbnailFileUploadName
+	}
+
 	panic(fmt.Errorf("not implemented: ModifyEpisode - modifyEpisode"))
 }
 
 // Episodes is the resolver for the episodes field.
-func (r *queryResolver) Episodes(ctx context.Context, pagination *model.Pagination) ([]*model.Episode, error) {
+func (r *queryResolver) Episodes(ctx context.Context, pagination model.Pagination) ([]*model.Episode, error) {
 	var episodes []models.Episode
 	var rtEpisodes []*model.Episode
 	if userName := helpers.JWTFromContext(ctx); len(userName) == 0 {
 		err := db.DB.Model(models.Episode{EpisodeStatus: models.EpisodeStatus_Published}).
-			Scopes(helpers.Paginate(*pagination.PageIndex, *pagination.PerPage)).
+			Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).
 			Find(&episodes).Error
 		if err != nil {
 			return nil, errors.New("episodes not found")
 		}
 	} else {
-		if err := db.DB.Scopes(helpers.Paginate(*pagination.PageIndex, *pagination.PerPage)).Find(&episodes).Error; err != nil {
+		if err := db.DB.Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).Find(&episodes).Error; err != nil {
 			return nil, errors.New("episodes not found")
 		}
 	}
@@ -49,7 +131,7 @@ func (r *queryResolver) Episodes(ctx context.Context, pagination *model.Paginati
 }
 
 // Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context, pagination *model.Pagination) ([]*model.User, error) {
+func (r *queryResolver) Users(ctx context.Context, pagination model.Pagination) ([]*model.User, error) {
 	userName := helpers.JWTFromContext(ctx)
 	if len(userName) == 0 {
 		return nil, errors.New("authorization failed")
@@ -73,11 +155,10 @@ func (r *queryResolver) Users(ctx context.Context, pagination *model.Pagination)
 		rtUsers = append(rtUsers, u.ToGQLUser())
 	}
 	return rtUsers, nil
-
 }
 
 // Login is the resolver for the login field.
-func (r *queryResolver) Login(ctx context.Context, credential *model.Credential) (*model.LoginData, error) {
+func (r *queryResolver) Login(ctx context.Context, credential model.Credential) (*model.LoginData, error) {
 	var user models.User
 	if err := db.DB.Model(models.User{UserName: credential.UserName}).First(&user).Error; err != nil {
 		return nil, errors.New("user with provided credentials not found")

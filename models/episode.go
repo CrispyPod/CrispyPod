@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"time"
 
 	"crispypod.com/crispypod/graph/model"
 	"github.com/google/uuid"
@@ -17,7 +18,7 @@ const (
 type Episode struct {
 	ID            uuid.UUID `gorm:"type:uuid;primary_key"`
 	Title         string
-	CreateTime    int64 `gorm:"autoCreateTime"`
+	CreateTime    time.Time
 	PublishTime   sql.NullTime
 	Description   string
 	EpisodeStatus EpisodeStatusType
@@ -37,7 +38,7 @@ func (e *Episode) ToGQLEpisode() *model.Episode {
 	rtEpisode := model.Episode{
 		ID:          e.ID.String(),
 		Title:       e.Title,
-		CreateTime:  int(e.CreateTime),
+		CreateTime:  int(e.CreateTime.Unix()),
 		Description: e.Description,
 		// PublishTime:         pt,
 		ThumbnailFileName:   &e.ThumbnailFileName.String,
