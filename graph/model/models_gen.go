@@ -21,6 +21,12 @@ type Episode struct {
 	User                *User   `json:"user"`
 }
 
+type EpisodesResult struct {
+	Items      []*Episode `json:"items"`
+	TotalCount int        `json:"totalCount"`
+	PageInfo   *PageInfo  `json:"pageInfo,omitempty"`
+}
+
 type LoginData struct {
 	Token string `json:"token"`
 }
@@ -34,6 +40,11 @@ type NewEpisode struct {
 	AudioFileDuration       *int    `json:"audioFileDuration,omitempty"`
 	ThumbnailFileName       *string `json:"thumbnailFileName,omitempty"`
 	ThumbnailFileUploadName *string `json:"thumbnailFileUploadName,omitempty"`
+}
+
+type PageInfo struct {
+	HasNextPage     bool `json:"hasNextPage"`
+	HasPreviousPage bool `json:"hasPreviousPage"`
 }
 
 type Pagination struct {
@@ -55,4 +66,10 @@ type User struct {
 	UserName    string `json:"userName"`
 	DisplayName string `json:"displayName"`
 	IsAdmin     bool   `json:"isAdmin"`
+}
+
+type UsersResult struct {
+	Items      []*User   `json:"items"`
+	TotalCount int       `json:"totalCount"`
+	PageInfo   *PageInfo `json:"pageInfo,omitempty"`
 }

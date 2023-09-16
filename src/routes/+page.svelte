@@ -26,7 +26,7 @@
     siteDescription
     siteUrl
   },
-  episodes(skip: 0,take: 10,order: {createTime:DESC},where: {episodeState:{eq:PUBLISHED}}){
+  episodes(pagination: {pageIndex: 1, perPage: 10}){
     items{
       id,
       title,

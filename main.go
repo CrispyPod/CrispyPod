@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crispypod.com/crispypod/controllers"
 	"crispypod.com/crispypod/db"
 	"crispypod.com/crispypod/graph"
 	"crispypod.com/crispypod/helpers"
@@ -26,6 +27,8 @@ func main() {
 	r.POST("/graphql", func(ctx *gin.Context) {
 		gH.ServeHTTP(ctx.Writer, ctx.Request)
 	})
+
+	r.POST("/audioFile", controllers.AudioFileUpload)
 
 	r.Run()
 }

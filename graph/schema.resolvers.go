@@ -6,8 +6,8 @@ package graph
 
 import (
 	"context"
+	"database/sql"
 	"errors"
-	"fmt"
 	"time"
 
 	"crispypod.com/crispypod/db"
@@ -24,8 +24,8 @@ func (r *mutationResolver) CreateEpisode(ctx context.Context, input *model.NewEp
 		return nil, errors.New("authorization failed")
 	}
 
-	var jwtDbUser models.User
-	if err := db.DB.Model(models.User{UserName: userName}).Find(&jwtDbUser).Error; err != nil {
+	var jwtDbUser models.DbUser
+	if err := db.DB.Model(models.DbUser{UserName: userName}).Find(&jwtDbUser).Error; err != nil {
 		return nil, errors.New("user not found")
 	}
 
@@ -70,8 +70,8 @@ func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *
 		return nil, errors.New("authorization failed")
 	}
 
-	var jwtDbUser models.User
-	if err := db.DB.Model(models.User{UserName: userName}).Find(&jwtDbUser).Error; err != nil {
+	var jwtDbUser models.DbUser
+	if err := db.DB.Model(models.DbUser{UserName: userName}).Find(&jwtDbUser).Error; err != nil {
 		return nil, errors.New("user not found")
 	}
 
@@ -85,41 +85,45 @@ func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *
 	dbEpisode.EpisodeStatus = models.EpisodeStatusType(*input.EpisodeStatus)
 
 	if input.AudioFileName != nil {
-		dbEpisode.AudioFileName.String = *input.AudioFileName
+		dbEpisode.AudioFileName = sql.NullString{String: *input.AudioFileName}
 	}
 
 	if input.AudioFileUploadName != nil {
-		dbEpisode.AudioFileUploadName.String = *input.AudioFileUploadName
+		dbEpisode.AudioFileUploadName = sql.NullString{String: *input.AudioFileUploadName}
 	}
 
 	if input.AudioFileDuration != nil {
-		dbEpisode.AudioFileDuration.Int64 = int64(*input.AudioFileDuration)
+		dbEpisode.AudioFileDuration = sql.NullInt64{Int64: int64(*input.AudioFileDuration)}
 	}
 
 	if input.ThumbnailFileName != nil {
-		dbEpisode.ThumbnailFileName.String = *input.ThumbnailFileName
+		dbEpisode.ThumbnailFileName = sql.NullString{String: *input.ThumbnailFileName}
 	}
 
 	if input.ThumbnailFileUploadName != nil {
-		dbEpisode.ThumbnailUploadName.String = *input.ThumbnailFileUploadName
+		dbEpisode.ThumbnailUploadName = sql.NullString{String: *input.ThumbnailFileUploadName}
 	}
 
-	panic(fmt.Errorf("not implemented: ModifyEpisode - modifyEpisode"))
+	db.DB.Save(dbEpisode)
+
+	return dbEpisode.ToGQLEpisode(), nil
 }
 
 // Episodes is the resolver for the episodes field.
-func (r *queryResolver) Episodes(ctx context.Context, pagination model.Pagination) ([]*model.Episode, error) {
+func (r *queryResolver) Episodes(ctx context.Context, pagination model.Pagination) (*model.EpisodesResult, error) {
 	var episodes []models.Episode
 	var rtEpisodes []*model.Episode
+	var count int64
 	if userName := helpers.JWTFromContext(ctx); len(userName) == 0 {
 		err := db.DB.Model(models.Episode{EpisodeStatus: models.EpisodeStatus_Published}).
+			Count(&count).
 			Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).
 			Find(&episodes).Error
 		if err != nil {
 			return nil, errors.New("episodes not found")
 		}
 	} else {
-		if err := db.DB.Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).Find(&episodes).Error; err != nil {
+		if err := db.DB.Count(&count).Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).Find(&episodes).Error; err != nil {
 			return nil, errors.New("episodes not found")
 		}
 	}
@@ -127,26 +131,34 @@ func (r *queryResolver) Episodes(ctx context.Context, pagination model.Paginatio
 	for _, e := range episodes {
 		rtEpisodes = append(rtEpisodes, e.ToGQLEpisode())
 	}
-	return rtEpisodes, nil
+
+	pageInfo := helpers.GetPageInfo(pagination.PageIndex, pagination.PerPage, int(count))
+	// return rtEpisodes, nil
+	return &model.EpisodesResult{
+		TotalCount: int(count),
+		Items:      rtEpisodes,
+		PageInfo:   &pageInfo,
+	}, nil
 }
 
 // Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context, pagination model.Pagination) ([]*model.User, error) {
+func (r *queryResolver) Users(ctx context.Context, pagination model.Pagination) (*model.UsersResult, error) {
+	var count int64
 	userName := helpers.JWTFromContext(ctx)
 	if len(userName) == 0 {
 		return nil, errors.New("authorization failed")
 	}
 
-	var dbJWTUser models.User
-	if err := db.DB.Model(&models.User{UserName: userName}).Find(&dbJWTUser).Error; err != nil {
+	var dbJWTUser models.DbUser
+	if err := db.DB.Count(&count).Model(&models.DbUser{UserName: userName}).Find(&dbJWTUser).Error; err != nil {
 		return nil, errors.New(err.Error())
 	}
 	if !dbJWTUser.IsAdmin {
 		return nil, errors.New("user not to access this data")
 	}
 
-	var users []models.User
-	if err := db.DB.Find(&users).Error; err != nil {
+	var users []models.DbUser
+	if err := db.DB.Count(&count).Find(&users).Error; err != nil {
 		return nil, errors.New(err.Error())
 	}
 
@@ -154,13 +166,20 @@ func (r *queryResolver) Users(ctx context.Context, pagination model.Pagination) 
 	for _, u := range users {
 		rtUsers = append(rtUsers, u.ToGQLUser())
 	}
-	return rtUsers, nil
+	// return rtUsers, nil
+	// return nil, nil
+	pageInfo := helpers.GetPageInfo(pagination.PageIndex, pagination.PerPage, int(count))
+	return &model.UsersResult{
+		TotalCount: int(count),
+		Items:      rtUsers,
+		PageInfo:   &pageInfo,
+	}, nil
 }
 
 // Login is the resolver for the login field.
 func (r *queryResolver) Login(ctx context.Context, credential model.Credential) (*model.LoginData, error) {
-	var user models.User
-	if err := db.DB.Model(models.User{UserName: credential.UserName}).First(&user).Error; err != nil {
+	var user models.DbUser
+	if err := db.DB.Model(models.DbUser{UserName: credential.UserName}).First(&user).Error; err != nil {
 		return nil, errors.New("user with provided credentials not found")
 	}
 	if helpers.CheckPasswordHash(credential.Password, user.Password) {
@@ -179,13 +198,12 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 		return nil, errors.New("authorization failed")
 	}
 
-	var dbJWTUser models.User
-	if err := db.DB.Model(&models.User{UserName: userName}).Find(&dbJWTUser).Error; err != nil {
+	var dbJWTUser models.DbUser
+	if err := db.DB.Model(&models.DbUser{UserName: userName}).Find(&dbJWTUser).Error; err != nil {
 		return nil, errors.New(err.Error())
 	}
 
 	return dbJWTUser.ToGQLUser(), nil
-
 }
 
 // SiteConfig is the resolver for the siteConfig field.

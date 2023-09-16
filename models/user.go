@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type User struct {
+type DbUser struct {
 	ID          uuid.UUID `gorm:"type:uuid;primary_key"`
 	CreateTime  time.Time
 	Email       string
@@ -17,7 +17,7 @@ type User struct {
 	IsAdmin     bool
 }
 
-func (u *User) ToGQLUser() *model.User {
+func (u *DbUser) ToGQLUser() *model.User {
 	return &model.User{
 		ID:          u.ID.String(),
 		Email:       u.Email,

@@ -19,15 +19,10 @@
 	});
 
 	async function getEpisodes(newPage: number) {
-		let skip = newPage * perPage;
 		let result = await graphqlRequest(
 			null,
-			`query{
-  episodes(skip: ` +
-				skip +
-				`,take: ` +
-				perPage +
-				`,order: {createTime:DESC},where: {episodeState:{eq:PUBLISHED}}){
+			`{
+				episodes(pagination: {pageIndex: 1, perPage: 10}){
     items{
       id,
       title,

@@ -31,7 +31,7 @@ type Episode struct {
 	AudioFileDuration   sql.NullInt64
 
 	UserID uuid.UUID
-	User   User
+	User   DbUser
 }
 
 func (e *Episode) ToGQLEpisode() *model.Episode {

@@ -3,69 +3,86 @@
 # https://gqlgen.com/getting-started/
 
 type Episode {
-  id: ID!
-  title: String!
-  createTime: Int!
-  description: String!
-  publishTime: Int
-  thumbnailFileName: String
-  thumbnailUploadName: String
-  audioFileName: String
-  audioFileUploadName: String
-  audioFileDuration: Int
-  user: User!
+	id: ID!
+	title: String!
+	createTime: Int!
+	description: String!
+	publishTime: Int
+	thumbnailFileName: String
+	thumbnailUploadName: String
+	audioFileName: String
+	audioFileUploadName: String
+	audioFileDuration: Int
+	user: User!
 }
 
 type User {
-  id: ID!
-  createTime: Int!
-  email: String!
-  userName: String!
-  displayName: String!
-  isAdmin: Boolean!
+	id: ID!
+	createTime: Int!
+	email: String!
+	userName: String!
+	displayName: String!
+	isAdmin: Boolean!
 }
 
 type SiteConfig {
-  id: ID!
-  siteName: String!
-  siteDescription: String!
-  siteUrl: String!
+	id: ID!
+	siteName: String!
+	siteDescription: String!
+	siteUrl: String!
 }
 
 input Pagination {
-  pageIndex: Int!
-  perPage: Int!
+	pageIndex: Int!
+	perPage: Int!
 }
 
 input Credential {
-  userName: String!
-  password: String!
+	userName: String!
+	password: String!
 }
 
 type LoginData {
-  token: String!
+	token: String!
+}
+
+type PageInfo {
+	hasNextPage: Boolean!
+	hasPreviousPage: Boolean!
+}
+
+type EpisodesResult {
+	items: [Episode!]!
+	totalCount: Int!
+	pageInfo: PageInfo
+}
+
+type UsersResult {
+	items: [User]!
+	totalCount: Int!
+	pageInfo: PageInfo
 }
 
 type Query {
-  episodes(pagination: Pagination!): [Episode!]!
-  users(pagination: Pagination!): [User]!
-  login(credential: Credential!): LoginData!
-  me: User!
-  siteConfig: SiteConfig!
+	episodes(pagination: Pagination!): EpisodesResult!
+	users(pagination: Pagination!): UsersResult!
+	login(credential: Credential!): LoginData!
+	me: User!
+	siteConfig: SiteConfig!
 }
 
 input NewEpisode {
-  title: String!
-  description: String!
-  episodeStatus: Int
-  audioFileName: String
-  audioFileUploadName: String
-  audioFileDuration: Int
-  thumbnailFileName: String
-  thumbnailFileUploadName: String
+	title: String!
+	description: String!
+	episodeStatus: Int
+	audioFileName: String
+	audioFileUploadName: String
+	audioFileDuration: Int
+	thumbnailFileName: String
+	thumbnailFileUploadName: String
 }
 
 type Mutation {
-  createEpisode(input: NewEpisode): Episode!
-  modifyEpisode(id: ID!, input: NewEpisode): Episode!
+	createEpisode(input: NewEpisode): Episode!
+	modifyEpisode(id: ID!, input: NewEpisode): Episode!
 }

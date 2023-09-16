@@ -29,14 +29,14 @@ func ConnectDatabase() {
 		panic(fmt.Sprintf("Failed to connect to database: %s", err))
 	}
 
-	err = db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(&models.DbUser{})
 	if err != nil {
 		panic(fmt.Sprintf("Failed to create User table: %s", err))
 	}
 
-	if err = db.First(&models.User{}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+	if err = db.First(&models.DbUser{}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		password, _ := helpers.HashPassword("crispy.pod")
-		admin := models.User{UserName: "admin", Password: password, ID: uuid.New(), IsAdmin: true, DisplayName: "Admin", Email: "admin@crispypod.com"}
+		admin := models.DbUser{UserName: "admin", Password: password, ID: uuid.New(), IsAdmin: true, DisplayName: "Admin", Email: "admin@crispypod.com"}
 		db.Create(&admin)
 	}
 
