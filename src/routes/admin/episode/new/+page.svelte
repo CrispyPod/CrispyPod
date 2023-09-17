@@ -15,10 +15,7 @@
 	let popUpContent: string | null = null;
 	let handlePopupConfirm: () => void = () => {};
 
-	async function handleSubmit(
-		e: SubmitEvent,
-		episodeData:Episode
-	) {
+	async function handleSubmit(e: SubmitEvent, episodeData: Episode) {
 		console.log('start processing submit form');
 
 		const form: HTMLFormElement | null = document.querySelector('#newEpisodeForm');
@@ -31,9 +28,7 @@
 				',audioFileName:"' +
 				episodeData.audioFileName +
 				'",audilFileUploadName:"' +
-				episodeData.audioFileUploadName +
-				'",audioFileDuration:' +
-				episodeData.audioFileDuration;
+				episodeData.audioFileUploadName;
 		}
 
 		const graphqlStr =
@@ -43,7 +38,7 @@
 			formData.get('description') +
 			`"` +
 			audioFileField +
-			`}){episode{id,title,description}}}`;
+			`}){id,title,description}}`;
 		const tokenS = get(token);
 		let result = await graphqlRequest(tokenS, graphqlStr);
 		var resultJson = await result.json();
