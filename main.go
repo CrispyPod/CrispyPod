@@ -5,6 +5,7 @@ import (
 	"crispypod.com/crispypod/db"
 	"crispypod.com/crispypod/graph"
 	"crispypod.com/crispypod/helpers"
+	"crispypod.com/crispypod/rssfeed"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -29,6 +30,8 @@ func main() {
 	})
 
 	r.POST("/audioFile", controllers.AudioFileUpload)
+
+	rssfeed.GenerateRSSFeed()
 
 	r.Run()
 }

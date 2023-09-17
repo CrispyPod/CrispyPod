@@ -14,6 +14,7 @@ import (
 	"crispypod.com/crispypod/graph/model"
 	"crispypod.com/crispypod/helpers"
 	"crispypod.com/crispypod/models"
+	"crispypod.com/crispypod/rssfeed"
 	"github.com/google/uuid"
 )
 
@@ -105,6 +106,7 @@ func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *
 	}
 
 	db.DB.Save(dbEpisode)
+	rssfeed.GenerateRSSFeed()
 
 	return dbEpisode.ToGQLEpisode(), nil
 }

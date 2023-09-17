@@ -38,3 +38,6 @@ go.work
 # env files
 env.sh
 .env
+
+# generated rss feed
+Feed/
