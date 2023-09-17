@@ -31,7 +31,7 @@
 				',audioFileName:"' +
 				episodeData.audioFileName +
 				'",audilFileUploadName:"' +
-				episodeData.audioFileUploadFileName +
+				episodeData.audioFileUploadName +
 				'",audioFileDuration:' +
 				episodeData.audioFileDuration;
 		}

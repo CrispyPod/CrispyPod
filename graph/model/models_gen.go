@@ -12,6 +12,7 @@ type Episode struct {
 	Title               string  `json:"title"`
 	CreateTime          int     `json:"createTime"`
 	Description         string  `json:"description"`
+	EpisodeStatus       *int    `json:"episodeStatus,omitempty"`
 	PublishTime         *int    `json:"publishTime,omitempty"`
 	ThumbnailFileName   *string `json:"thumbnailFileName,omitempty"`
 	ThumbnailUploadName *string `json:"thumbnailUploadName,omitempty"`

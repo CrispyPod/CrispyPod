@@ -69,7 +69,7 @@
 		let audioFile: AudioFile = await resp.json();
 
 		episodeData!.audioFileName = audioFile.audioFileName;
-		episodeData!.audioFileUploadFileName = file?.name!;
+		episodeData!.audioFileUploadName = file?.name!;
 		episodeData!.audioFileDuration = audioFile.audioFileDuration;
 		fileUploadedAndNotSaved = true;
 	}
@@ -111,7 +111,7 @@
 		</div>
 
 		<div class="border-b border-gray-900/10 pb-12">
-			{#if episodeData == null || episodeData.audioFileName == null}
+			{#if episodeData == null || episodeData.audioFileName == null || episodeData.audioFileName.length == 0}
 				<div>
 					<p>Upload audio file</p>
 					<input
@@ -139,8 +139,8 @@
 									id="status-draft"
 									name="status"
 									type="radio"
-									value="draft"
-									checked={episodeData == null || episodeData.episodeState == EpisodeState.draft}
+									value="0"
+									checked={episodeData != null && episodeData.episodeStatus == EpisodeState.draft}
 									class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
 								/>
 								<label for="status-draft" class="block text-sm font-medium leading-6 text-gray-900"
@@ -153,9 +153,9 @@
 									id="status-published"
 									name="status"
 									type="radio"
-									value="published"
+									value="1"
 									checked={episodeData != null &&
-										episodeData.episodeState == EpisodeState.published}
+										episodeData.episodeStatus == EpisodeState.published}
 									class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
 								/>
 								<label

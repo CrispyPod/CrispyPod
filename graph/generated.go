@@ -51,6 +51,7 @@ type ComplexityRoot struct {
 		AudioFileUploadName func(childComplexity int) int
 		CreateTime          func(childComplexity int) int
 		Description         func(childComplexity int) int
+		EpisodeStatus       func(childComplexity int) int
 		ID                  func(childComplexity int) int
 		PublishTime         func(childComplexity int) int
 		ThumbnailFileName   func(childComplexity int) int
@@ -173,6 +174,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Episode.Description(childComplexity), true
+
+	case "Episode.episodeStatus":
+		if e.complexity.Episode.EpisodeStatus == nil {
+			break
+		}
+
+		return e.complexity.Episode.EpisodeStatus(childComplexity), true
 
 	case "Episode.id":
 		if e.complexity.Episode.ID == nil {
@@ -890,6 +898,47 @@ func (ec *executionContext) fieldContext_Episode_description(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Episode_episodeStatus(ctx context.Context, field graphql.CollectedField, obj *model.Episode) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Episode_episodeStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EpisodeStatus, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Episode_episodeStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Episode",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Episode_publishTime(ctx context.Context, field graphql.CollectedField, obj *model.Episode) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Episode_publishTime(ctx, field)
 	if err != nil {
@@ -1241,6 +1290,8 @@ func (ec *executionContext) fieldContext_EpisodesResult_items(ctx context.Contex
 				return ec.fieldContext_Episode_createTime(ctx, field)
 			case "description":
 				return ec.fieldContext_Episode_description(ctx, field)
+			case "episodeStatus":
+				return ec.fieldContext_Episode_episodeStatus(ctx, field)
 			case "publishTime":
 				return ec.fieldContext_Episode_publishTime(ctx, field)
 			case "thumbnailFileName":
@@ -1444,6 +1495,8 @@ func (ec *executionContext) fieldContext_Mutation_createEpisode(ctx context.Cont
 				return ec.fieldContext_Episode_createTime(ctx, field)
 			case "description":
 				return ec.fieldContext_Episode_description(ctx, field)
+			case "episodeStatus":
+				return ec.fieldContext_Episode_episodeStatus(ctx, field)
 			case "publishTime":
 				return ec.fieldContext_Episode_publishTime(ctx, field)
 			case "thumbnailFileName":
@@ -1523,6 +1576,8 @@ func (ec *executionContext) fieldContext_Mutation_modifyEpisode(ctx context.Cont
 				return ec.fieldContext_Episode_createTime(ctx, field)
 			case "description":
 				return ec.fieldContext_Episode_description(ctx, field)
+			case "episodeStatus":
+				return ec.fieldContext_Episode_episodeStatus(ctx, field)
 			case "publishTime":
 				return ec.fieldContext_Episode_publishTime(ctx, field)
 			case "thumbnailFileName":
@@ -1753,6 +1808,8 @@ func (ec *executionContext) fieldContext_Query_episode(ctx context.Context, fiel
 				return ec.fieldContext_Episode_createTime(ctx, field)
 			case "description":
 				return ec.fieldContext_Episode_description(ctx, field)
+			case "episodeStatus":
+				return ec.fieldContext_Episode_episodeStatus(ctx, field)
 			case "publishTime":
 				return ec.fieldContext_Episode_publishTime(ctx, field)
 			case "thumbnailFileName":
@@ -4717,6 +4774,8 @@ func (ec *executionContext) _Episode(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "episodeStatus":
+			out.Values[i] = ec._Episode_episodeStatus(ctx, field, obj)
 		case "publishTime":
 			out.Values[i] = ec._Episode_publishTime(ctx, field, obj)
 		case "thumbnailFileName":

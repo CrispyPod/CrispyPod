@@ -22,7 +22,7 @@
 		if ($page.url.pathname != '/admin/signin' && tokenS != null) {
 			let result = await graphqlRequest(tokenS, `query{me{id,userName}}`);
 			let jsonResp = await result.json();
-			if (jsonResp.data.me == null) {
+			if (jsonResp.data == null || jsonResp.data.me == null) {
 				token.set(null);
 			}
 		}

@@ -115,15 +115,17 @@ func (r *queryResolver) Episodes(ctx context.Context, pagination model.Paginatio
 	var rtEpisodes []*model.Episode
 	var count int64
 	if userName := helpers.JWTFromContext(ctx); len(userName) == 0 {
-		err := db.DB.Model(models.Episode{EpisodeStatus: models.EpisodeStatus_Published}).
-			Count(&count).
+		err := db.DB.
 			Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).
-			Find(&episodes).Error
+			Find(&episodes, models.Episode{EpisodeStatus: models.EpisodeStatus_Published}).
+			Count(&count).Error
 		if err != nil {
 			return nil, errors.New("episodes not found")
 		}
 	} else {
-		if err := db.DB.Count(&count).Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).Find(&episodes).Error; err != nil {
+		if err := db.DB.Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).
+			Find(&episodes).
+			Count(&count).Error; err != nil {
 			return nil, errors.New("episodes not found")
 		}
 	}
@@ -145,7 +147,7 @@ func (r *queryResolver) Episodes(ctx context.Context, pagination model.Paginatio
 func (r *queryResolver) Episode(ctx context.Context, id string) (*model.Episode, error) {
 	userName := helpers.JWTFromContext(ctx)
 	var dbEpisode models.Episode
-	if err := db.DB.Model(models.Episode{ID: uuid.Must(uuid.Parse(id))}).Find(&dbEpisode).Error; err != nil {
+	if err := db.DB.Find(&dbEpisode, models.Episode{ID: uuid.Must(uuid.Parse(id))}).Error; err != nil {
 		return nil, errors.New("episode not found")
 	}
 	if len(userName) == 0 && dbEpisode.EpisodeStatus == models.EpisodeStatus_Draft {
@@ -164,7 +166,7 @@ func (r *queryResolver) Users(ctx context.Context, pagination model.Pagination) 
 	}
 
 	var dbJWTUser models.DbUser
-	if err := db.DB.Count(&count).Model(&models.DbUser{UserName: userName}).Find(&dbJWTUser).Error; err != nil {
+	if err := db.DB.Find(&dbJWTUser, models.DbUser{UserName: userName}).Count(&count).Error; err != nil {
 		return nil, errors.New(err.Error())
 	}
 	if !dbJWTUser.IsAdmin {
@@ -172,7 +174,7 @@ func (r *queryResolver) Users(ctx context.Context, pagination model.Pagination) 
 	}
 
 	var users []models.DbUser
-	if err := db.DB.Count(&count).Find(&users).Error; err != nil {
+	if err := db.DB.Model(&models.DbUser{}).Count(&count).Find(&users).Error; err != nil {
 		return nil, errors.New(err.Error())
 	}
 

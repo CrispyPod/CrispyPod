@@ -21,6 +21,7 @@ vite.config.ts.timestamp-*
 *.dylib
 __debug_bin*
 main
+crispypod
 
 # Test binary, built with `go test -c`
 *.test

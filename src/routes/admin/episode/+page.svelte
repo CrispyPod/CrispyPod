@@ -24,25 +24,25 @@
 		const tokenS = get(token);
 		const result = await graphqlRequest(
 			tokenS,
-			`query{
-  episodes(skip: ` +
-				skip +
-				`,take: ` +
+			`{
+				episodes(pagination: {pageIndex:` +
+				newPage +
+				`, perPage: ` +
 				perPage +
-				`,order: {createTime:DESC}){
+				`}){
     items{
       id,
       title,
-      episodeState,
-      description,
-	  createTime
+	  description,
+      createTime,
+      thumbnailFileName,
     },
-	totalCount,
-	pageInfo{
+    totalCount,
+    pageInfo{
       hasNextPage,
       hasPreviousPage
     },
-  }
+  } 
 }`
 		);
 

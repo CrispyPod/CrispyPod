@@ -35,11 +35,14 @@ type Episode struct {
 }
 
 func (e *Episode) ToGQLEpisode() *model.Episode {
+	es := new(int)
+	*es = int(e.EpisodeStatus)
 	rtEpisode := model.Episode{
-		ID:          e.ID.String(),
-		Title:       e.Title,
-		CreateTime:  int(e.CreateTime.Unix()),
-		Description: e.Description,
+		ID:            e.ID.String(),
+		Title:         e.Title,
+		CreateTime:    int(e.CreateTime.Unix()),
+		Description:   e.Description,
+		EpisodeStatus: es,
 		// PublishTime:         pt,
 		ThumbnailFileName:   &e.ThumbnailFileName.String,
 		ThumbnailUploadName: &e.ThumbnailUploadName.String,

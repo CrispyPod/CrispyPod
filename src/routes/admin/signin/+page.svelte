@@ -26,7 +26,7 @@
 		);
 
 		const jsonResult = await result.json();
-		if (jsonResult.errors != null) {
+		if (jsonResult.errors == null) {
 			token.set(jsonResult.data.login.token);
 			goto('/admin');
 		} else {

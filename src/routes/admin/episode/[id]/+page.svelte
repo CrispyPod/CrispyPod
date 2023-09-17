@@ -19,7 +19,7 @@
 			tokenS,
 			`{episode(id:"` +
 				data.id +
-				`"){id,title,description,episodeState,audioFileName,audioFileUploadFileName,audioFileDuration,audioFileDurationTimeSpan}}`
+				`"){id,title,description,episodeStatus,audioFileName,audioFileUploadName,audioFileDuration}}`
 		);
 		const jsonResp = await result.json();
 		if (jsonResp.data != null) {
@@ -33,35 +33,33 @@
 	let handlePopupConfirm: () => void = () => {};
 
 	async function handleSubmit(e: SubmitEvent, episodeData: Episode) {
-
 		const form: HTMLFormElement | null = document.querySelector('#newEpisodeForm');
 		const formData = new FormData(form!);
 		const toeknS = get(token);
 
 		let audioFileField = '';
-		if (episodeData.audioFileName != null) {
+		if (episodeData.audioFileName!.length > 0) {
 			// console.log(episodeData);
 			audioFileField +=
 				',audioFileName:"' +
 				episodeData.audioFileName +
 				'",audilFileUploadName:"' +
-				episodeData.audioFileUploadFileName +
-				'",audioFileDuration:' +
-				episodeData.audioFileDuration;
+				episodeData.audioFileUploadName;
 		}
 
+		let stat = parseInt(formData.get('status')!.toString());
 		const result = await graphqlRequest(
 			toeknS,
-			`mutation{  modifyEpisode(input: {episodeId:"` +
+			`mutation{  modifyEpisode(id:"` +
 				episodeData.id +
-				`",title:"` +
+				`",input: {title:"` +
 				formData.get('title') +
 				`",description:"` +
 				formData.get('description') +
-				`",episodeState:` +
-				formData.get('status')?.toString().toUpperCase() +
+				`",episodeStatus:` +
+				stat +
 				audioFileField +
-				`}){episode{title,description,episodeState}}}`
+				`}){title,description,episodeStatus}}`
 		);
 		var resultJson = await result.json();
 
