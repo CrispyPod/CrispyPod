@@ -4,31 +4,36 @@
 	import { token } from '$lib/stores/tokenStore';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
+	import { graphqlRequest } from '$lib/graphqlRequest';
 
 	let errMessage: string | null = null;
 
 	async function handleSubmit() {
 		const email = document.getElementById('email') as HTMLInputElement;
 		const password = document.getElementById('password') as HTMLInputElement;
-		const result = await fetch('/api/login', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				EmailOrUserName: email.value,
-				Password: password.value
-			})
-		});
 
-		if (result.status == 200) {
-			const jsonResult = await result.json();
-			token.set(jsonResult.token);
+		const result = await graphqlRequest(
+			null,
+			`{
+  login(credential: {userName: "` +
+				email.value +
+				`", password: "` +
+				password.value +
+				`"}) {
+    token
+  }
+}`
+		);
+
+		const jsonResult = await result.json();
+		if (jsonResult.errors != null) {
+			token.set(jsonResult.data.login.token);
 			goto('/admin');
 		} else {
-			const jsonResult = await result.json();
-			if (jsonResult.message == null) {
+			if (jsonResult.errors.length == 0) {
 				errMessage = 'Sign in failed';
 			} else {
-				errMessage = jsonResult.message;
+				errMessage = jsonResult.errors[0].message;
 			}
 		}
 	}

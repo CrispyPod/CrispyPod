@@ -141,6 +141,20 @@ func (r *queryResolver) Episodes(ctx context.Context, pagination model.Paginatio
 	}, nil
 }
 
+// Episode is the resolver for the episode field.
+func (r *queryResolver) Episode(ctx context.Context, id string) (*model.Episode, error) {
+	userName := helpers.JWTFromContext(ctx)
+	var dbEpisode models.Episode
+	if err := db.DB.Model(models.Episode{ID: uuid.Must(uuid.Parse(id))}).Find(&dbEpisode).Error; err != nil {
+		return nil, errors.New("episode not found")
+	}
+	if len(userName) == 0 && dbEpisode.EpisodeStatus == models.EpisodeStatus_Draft {
+		// check if episode status was draft, if so, we will not return it.
+		return nil, errors.New("episode not accessable")
+	}
+	return dbEpisode.ToGQLEpisode(), nil
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, pagination model.Pagination) (*model.UsersResult, error) {
 	var count int64

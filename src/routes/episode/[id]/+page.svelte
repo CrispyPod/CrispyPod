@@ -13,7 +13,7 @@
 			null,
 			`{episode(id:"` +
 				data.id +
-				`"){id,title,createTime,description,episodeState,audioFileName,audioFileDuration}}`
+				`"){id,title,createTime,description,audioFileName,audioFileDuration}}`
 		);
 		const jsonResp = await result.json();
 		if (jsonResp.data != null) {

@@ -22,7 +22,11 @@
 		let result = await graphqlRequest(
 			null,
 			`{
-				episodes(pagination: {pageIndex: 1, perPage: 10}){
+				episodes(pagination: {pageIndex:` +
+				newPage +
+				`, perPage: ` +
+				perPage +
+				`}){
     items{
       id,
       title,
@@ -48,7 +52,7 @@
 
 	function handlePageChange(pageIndex: number) {
 		// curPage = pageIndex;
-		getEpisodes(pageIndex - 1);
+		getEpisodes(pageIndex);
 	}
 </script>
 

@@ -17,6 +17,10 @@ type DbUser struct {
 	IsAdmin     bool
 }
 
+func (DbUser) TableName() string {
+	return "user"
+}
+
 func (u *DbUser) ToGQLUser() *model.User {
 	return &model.User{
 		ID:          u.ID.String(),
