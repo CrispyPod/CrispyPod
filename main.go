@@ -29,7 +29,8 @@ func main() {
 		gH.ServeHTTP(ctx.Writer, ctx.Request)
 	})
 
-	r.POST("/audioFile", controllers.AudioFileUpload)
+	r.POST("/api/audioFile", controllers.AudioFileUpload)
+	r.GET("/api/audioFile/:fileName", controllers.GetAudioFile)
 
 	rssfeed.GenerateRSSFeed()
 

@@ -86,23 +86,23 @@ func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *
 	dbEpisode.EpisodeStatus = models.EpisodeStatusType(*input.EpisodeStatus)
 
 	if input.AudioFileName != nil {
-		dbEpisode.AudioFileName = sql.NullString{String: *input.AudioFileName}
+		dbEpisode.AudioFileName = sql.NullString{String: *input.AudioFileName, Valid: true}
 	}
 
 	if input.AudioFileUploadName != nil {
-		dbEpisode.AudioFileUploadName = sql.NullString{String: *input.AudioFileUploadName}
+		dbEpisode.AudioFileUploadName = sql.NullString{String: *input.AudioFileUploadName, Valid: true}
 	}
 
 	if input.AudioFileDuration != nil {
-		dbEpisode.AudioFileDuration = sql.NullInt64{Int64: int64(*input.AudioFileDuration)}
+		dbEpisode.AudioFileDuration = sql.NullInt64{Int64: int64(*input.AudioFileDuration), Valid: true}
 	}
 
 	if input.ThumbnailFileName != nil {
-		dbEpisode.ThumbnailFileName = sql.NullString{String: *input.ThumbnailFileName}
+		dbEpisode.ThumbnailFileName = sql.NullString{String: *input.ThumbnailFileName, Valid: true}
 	}
 
 	if input.ThumbnailFileUploadName != nil {
-		dbEpisode.ThumbnailUploadName = sql.NullString{String: *input.ThumbnailFileUploadName}
+		dbEpisode.ThumbnailUploadName = sql.NullString{String: *input.ThumbnailFileUploadName, Valid: true}
 	}
 
 	db.DB.Save(dbEpisode)

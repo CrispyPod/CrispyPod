@@ -41,3 +41,6 @@ env.sh
 
 # generated rss feed
 Feed/
+
+# folder for uploaded files
+UploadFile/

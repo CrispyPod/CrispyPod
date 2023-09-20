@@ -56,7 +56,8 @@
 
 		let data = new FormData();
 		data.append('file', file!);
-		let resp = await fetch('/api/AudioFile/upload', {
+		data.append('episodeId', episodeData.id);
+		let resp = await fetch('/api/audioFile', {
 			method: 'POST',
 			headers: [['Authorization', 'Bearer ' + tokenS]],
 			body: data
@@ -70,7 +71,7 @@
 
 		episodeData!.audioFileName = audioFile.audioFileName;
 		episodeData!.audioFileUploadName = file?.name!;
-		episodeData!.audioFileDuration = audioFile.audioFileDuration;
+		// episodeData!.audioFileDuration = audioFile.audioFileDuration;
 		fileUploadedAndNotSaved = true;
 	}
 </script>
@@ -125,7 +126,7 @@
 				{#if fileUploadedAndNotSaved}
 					Please hit save so that changes are committed.
 				{/if}
-				<WaveForm fileUrl="/api/AudioFile/{episodeData.audioFileName}" />
+				<WaveForm fileUrl="/api/audioFile/{episodeData.audioFileName}" />
 			{/if}
 
 			<div class="mt-10 space-y-10">

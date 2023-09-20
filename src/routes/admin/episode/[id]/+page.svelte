@@ -43,8 +43,8 @@
 			audioFileField +=
 				',audioFileName:"' +
 				episodeData.audioFileName +
-				'",audilFileUploadName:"' +
-				episodeData.audioFileUploadName;
+				'",audioFileUploadName:"' +
+				episodeData.audioFileUploadName+'",';
 		}
 
 		let stat = parseInt(formData.get('status')!.toString());

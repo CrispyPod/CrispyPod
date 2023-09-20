@@ -15,7 +15,7 @@ import (
 )
 
 type UploadStruct struct {
-	EpisodeId string `form:"EpisodeId"`
+	EpisodeId string `form:"episodeId"`
 }
 
 const FolderPath = "UploadFile"
@@ -48,6 +48,12 @@ func AudioFileUpload(c *gin.Context) {
 	fileFolder := filepath.Join(FolderPath, AudioFileFolder)
 	filePath := filepath.Join(fileFolder, savedFileName)
 
+	if _, err := os.Stat(FolderPath); os.IsNotExist(err) {
+		if err := os.Mkdir(FolderPath, os.ModePerm); err != nil {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Failed to create folder"})
+		}
+	}
+
 	if _, err := os.Stat(fileFolder); os.IsNotExist(err) {
 		if err := os.Mkdir(fileFolder, os.ModePerm); err != nil {
 			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Failed to create folder"})
@@ -56,13 +62,22 @@ func AudioFileUpload(c *gin.Context) {
 
 	c.SaveUploadedFile(file, filePath)
 
-	dbEpisode.AudioFileName = sql.NullString{String: savedFileName}
-	dbEpisode.AudioFileUploadName = sql.NullString{String: file.Filename}
+	dbEpisode.AudioFileName = sql.NullString{String: savedFileName, Valid: true}
+	dbEpisode.AudioFileUploadName = sql.NullString{String: file.Filename, Valid: true}
 
 	db.DB.Save(&dbEpisode)
 
 	c.JSON(http.StatusOK, gin.H{
-		"fileName": savedFileName,
+		"audioFileName": savedFileName,
 	})
 
+}
+
+func GetAudioFile(c *gin.Context) {
+	fileName := c.Param("fileName")
+	audioFilePath := filepath.Join(FolderPath, AudioFileFolder, fileName)
+	if _, err := os.Stat(audioFilePath); os.IsNotExist(err) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Audio file not found"})
+	}
+	c.File(audioFilePath)
 }

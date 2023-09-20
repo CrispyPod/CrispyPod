@@ -29,7 +29,7 @@
 		<h1 class="text-2xl m-10">
 			{episodeData.title}
 		</h1>
-		{#if episodeData.audioFileName != null}
+		{#if episodeData.audioFileName != null && episodeData.audioFileName.length > 0}
 			<div class="card lg:card-side bg-base-100 shadow-xl m-10">
 				<img
 					class="w-80 h-80"
@@ -38,7 +38,7 @@
 				/>
 
 				<div class="card-body">
-					<WaveForm fileUrl="/api/AudioFile/{episodeData.audioFileName}" />
+					<WaveForm fileUrl="/api/audioFile/{episodeData.audioFileName}" />
 				</div>
 			</div>
 		{/if}
