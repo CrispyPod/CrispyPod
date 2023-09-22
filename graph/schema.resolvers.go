@@ -8,6 +8,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"crispypod.com/crispypod/db"
@@ -109,6 +110,11 @@ func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *
 	rssfeed.GenerateRSSFeed()
 
 	return dbEpisode.ToGQLEpisode(), nil
+}
+
+// ModifySiteConfig is the resolver for the modifySiteConfig field.
+func (r *mutationResolver) ModifySiteConfig(ctx context.Context, input *model.SiteConfigInput) (*model.SiteConfig, error) {
+	panic(fmt.Errorf("not implemented: ModifySiteConfig - modifySiteConfig"))
 }
 
 // Episodes is the resolver for the episodes field.
@@ -238,6 +244,21 @@ func (r *queryResolver) SiteConfig(ctx context.Context) (*model.SiteConfig, erro
 	}
 
 	return siteConfig.ToGQLSiteConfig(), nil
+}
+
+// DashboardInfo is the resolver for the dashboardInfo field.
+func (r *queryResolver) DashboardInfo(ctx context.Context) (*model.DashboardInfo, error) {
+	userName := helpers.JWTFromContext(ctx)
+	if len(userName) == 0 {
+		return nil, errors.New("authorization failed")
+	}
+
+	// panic(fmt.Errorf("not implemented: DashboardInfo - dashboardInfo"))
+	var rtn = &model.DashboardInfo{}
+	var count int64
+	db.DB.Model(models.Episode{}).Count(&count)
+	rtn.EpisodeCount = int(count)
+	return rtn, nil
 }
 
 // Mutation returns MutationResolver implementation.

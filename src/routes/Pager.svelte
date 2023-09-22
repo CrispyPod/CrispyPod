@@ -1,7 +1,7 @@
 <script lang="ts">
 	import PagerIndex from './PagerIndex.svelte';
 
-	let curPage: number = 1;
+	let curPage: number = 0;
 	export let perPage: number = 0;
 	export let sum: number = 0;
 	export let hasPreviousPage: boolean = false;
@@ -14,9 +14,9 @@
 	$: if (curPage && sum) onPageDataChanged();
 
 	function onPageDataChanged() {
-		handlePageChange(curPage);
+		handlePageChange(curPage + 1);
 		pageIndecies = [];
-		pageIndecies.push(curPage);
+		pageIndecies.push(curPage + 1);
 		const maxPages = Math.ceil(sum / perPage);
 		for (let index = 1; index < 6 && pageIndecies.length < 5; index++) {
 			pageIndecies = [
@@ -45,9 +45,9 @@
 		<div>
 			<p class="text-sm text-gray-700">
 				Showing
-				<span class="font-medium">{perPage * (curPage - 1)}</span>
-				to
 				<span class="font-medium">{perPage * curPage}</span>
+				to
+				<span class="font-medium">{perPage * (curPage + 1)}</span>
 				of
 				<span class="font-medium">{sum}</span>
 				results

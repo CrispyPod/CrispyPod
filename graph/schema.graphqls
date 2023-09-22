@@ -30,6 +30,7 @@ type SiteConfig {
 	id: ID!
 	siteName: String!
 	siteDescription: String!
+	siteFullDescription: String!
 	siteUrl: String!
 }
 
@@ -64,6 +65,10 @@ type UsersResult {
 	pageInfo: PageInfo
 }
 
+type DashboardInfo {
+	episodeCount: Int!
+}
+
 type Query {
 	episodes(pagination: Pagination!): EpisodesResult!
 	episode(id: ID!): Episode!
@@ -71,6 +76,7 @@ type Query {
 	login(credential: Credential!): LoginData!
 	me: User!
 	siteConfig: SiteConfig!
+	dashboardInfo: DashboardInfo!
 }
 
 input NewEpisode {
@@ -84,7 +90,15 @@ input NewEpisode {
 	thumbnailFileUploadName: String
 }
 
+input SiteConfigInput {
+	siteName: String!
+	siteDescription: String!
+	siteFullDescription: String!
+	siteUrl: String!
+}
+
 type Mutation {
 	createEpisode(input: NewEpisode): Episode!
 	modifyEpisode(id: ID!, input: NewEpisode): Episode!
+	modifySiteConfig(input: SiteConfigInput): SiteConfig!
 }

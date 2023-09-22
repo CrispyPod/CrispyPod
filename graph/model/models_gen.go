@@ -7,6 +7,10 @@ type Credential struct {
 	Password string `json:"password"`
 }
 
+type DashboardInfo struct {
+	EpisodeCount int `json:"episodeCount"`
+}
+
 type Episode struct {
 	ID                  string  `json:"id"`
 	Title               string  `json:"title"`
@@ -54,10 +58,18 @@ type Pagination struct {
 }
 
 type SiteConfig struct {
-	ID              string `json:"id"`
-	SiteName        string `json:"siteName"`
-	SiteDescription string `json:"siteDescription"`
-	SiteURL         string `json:"siteUrl"`
+	ID                  string `json:"id"`
+	SiteName            string `json:"siteName"`
+	SiteDescription     string `json:"siteDescription"`
+	SiteFullDescription string `json:"siteFullDescription"`
+	SiteURL             string `json:"siteUrl"`
+}
+
+type SiteConfigInput struct {
+	SiteName            string `json:"siteName"`
+	SiteDescription     string `json:"siteDescription"`
+	SiteFullDescription string `json:"siteFullDescription"`
+	SiteURL             string `json:"siteUrl"`
 }
 
 type User struct {

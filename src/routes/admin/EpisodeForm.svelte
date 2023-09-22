@@ -2,7 +2,7 @@
 	import { Episode, EpisodeState } from '$lib/models/episode';
 	import { token } from '$lib/stores/tokenStore';
 	import { get } from 'svelte/store';
-	import WaveForm from '../../WaveForm.svelte';
+	import WaveForm from '../WaveForm.svelte';
 	import type { AudioFile } from '$lib/models/audioFile';
 	import { onMount } from 'svelte';
 

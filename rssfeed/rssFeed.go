@@ -29,7 +29,7 @@ func GenerateRSSFeed() {
 	for _, e := range episodes {
 		feed.Items = append(feed.Items, &feeds.Item{
 			Title:       e.Title,
-			Link:        &feeds.Link{Href: dbSiteConfig.SiteUrl + "/audioFile/" + e.AudioFileName.String},
+			Link:        &feeds.Link{Href: dbSiteConfig.SiteUrl + "/api/audioFile/" + e.AudioFileName.String},
 			Description: e.Description,
 			Created:     e.CreateTime,
 		})
@@ -45,7 +45,5 @@ func GenerateRSSFeed() {
 	}
 
 	os.WriteFile(filepath.Join(rssFolder, "rss.xml"), []byte(rssFeed), os.ModePerm)
-
-	fmt.Println(rssFeed)
 
 }

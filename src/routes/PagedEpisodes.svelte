@@ -19,6 +19,7 @@
 	});
 
 	async function getEpisodes(newPage: number) {
+			console.log('Should first load:', shouldFirstLoad);
 		let result = await graphqlRequest(
 			null,
 			`{

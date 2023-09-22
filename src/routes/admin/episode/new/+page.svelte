@@ -2,7 +2,7 @@
 	import { graphqlRequest } from '$lib/graphqlRequest';
 	import { get } from 'svelte/store';
 	import AdminLayout from '../../AdminLayout.svelte';
-	import EpisodeForm from '../EpisodeForm.svelte';
+	import EpisodeForm from '../../EpisodeForm.svelte';
 	import { token } from '$lib/stores/tokenStore';
 	import { goto } from '$app/navigation';
 	import Popup from '../../../Popup.svelte';

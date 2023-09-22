@@ -76,8 +76,9 @@
 					<div class="hidden md:block">
 						<div class="ml-10 flex items-baseline space-x-4">
 							<!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-							<AdminHeaderLink linkName="Dashboard" linkTo="/admin" largeLayout={true} />
-							<AdminHeaderLink linkName="Episodes" linkTo="/admin/episode" largeLayout={true} />
+							<AdminHeaderLink linkName="Site Setting" linkTo="/admin/site-config" largeLayout={true} />
+							<!-- <AdminHeaderLink linkName="Dashboard" linkTo="/admin" largeLayout={true} /> -->
+							<!-- <AdminHeaderLink linkName="Episodes" linkTo="/admin/episode" largeLayout={true} /> -->
 							<!-- <a
 								href="/admin"
 								class=" rounded-md px-3 py-2 text-sm font-medium {$page.url.pathname == '/admin'

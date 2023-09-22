@@ -4,6 +4,7 @@
 	import { graphqlRequest } from '$lib/graphqlRequest';
 	import { onMount } from 'svelte';
 	import type { Episode } from '$lib/models/episode';
+	import { siteConfigS } from '$lib/stores/siteConfigStore';
 
 	let episodes: Array<Episode> | null = null;
 	let siteName: string = '';
@@ -17,15 +18,17 @@
 		getEpisodes();
 	});
 
+	siteConfigS.subscribe((v) => {
+		if (v != null) {
+			siteName = v.siteName;
+			siteDescription = v.siteDescription;
+		}
+	});
+
 	async function getEpisodes() {
 		let result = await graphqlRequest(
 			null,
 			`query{
-				siteConfig{
-    siteName
-    siteDescription
-    siteUrl
-  },
   episodes(pagination: {pageIndex: 1, perPage: 10}){
     items{
       id,
@@ -45,8 +48,6 @@
 
 		let json_resp = await result.json();
 		episodes = json_resp.data.episodes.items;
-		siteName = json_resp.data.siteConfig.siteName;
-		siteDescription = json_resp.data.siteConfig.siteDescription;
 
 		hasPreviousPage = json_resp.data.episodes.pageInfo.hasPreviousPage ?? false;
 		hasNextPage = json_resp.data.episodes.pageInfo.hasNextPage ?? false;

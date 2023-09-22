@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import AdminLayout from '../../AdminLayout.svelte';
-	import EpisodeForm from '../EpisodeForm.svelte';
+	import EpisodeForm from '../../EpisodeForm.svelte';
 	import { graphqlRequest } from '$lib/graphqlRequest';
 	import { get } from 'svelte/store';
 	import { token } from '$lib/stores/tokenStore';
