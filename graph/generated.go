@@ -88,7 +88,7 @@ type ComplexityRoot struct {
 	Query struct {
 		DashboardInfo func(childComplexity int) int
 		Episode       func(childComplexity int, id string) int
-		Episodes      func(childComplexity int, pagination model.Pagination) int
+		Episodes      func(childComplexity int, pagination model.Pagination, published *bool) int
 		Login         func(childComplexity int, credential model.Credential) int
 		Me            func(childComplexity int) int
 		SiteConfig    func(childComplexity int) int
@@ -125,7 +125,7 @@ type MutationResolver interface {
 	ModifySiteConfig(ctx context.Context, input *model.SiteConfigInput) (*model.SiteConfig, error)
 }
 type QueryResolver interface {
-	Episodes(ctx context.Context, pagination model.Pagination) (*model.EpisodesResult, error)
+	Episodes(ctx context.Context, pagination model.Pagination, published *bool) (*model.EpisodesResult, error)
 	Episode(ctx context.Context, id string) (*model.Episode, error)
 	Users(ctx context.Context, pagination model.Pagination) (*model.UsersResult, error)
 	Login(ctx context.Context, credential model.Credential) (*model.LoginData, error)
@@ -347,7 +347,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Episodes(childComplexity, args["pagination"].(model.Pagination)), true
+		return e.complexity.Query.Episodes(childComplexity, args["pagination"].(model.Pagination), args["published"].(*bool)), true
 
 	case "Query.login":
 		if e.complexity.Query.Login == nil {
@@ -709,6 +709,15 @@ func (ec *executionContext) field_Query_episodes_args(ctx context.Context, rawAr
 		}
 	}
 	args["pagination"] = arg0
+	var arg1 *bool
+	if tmp, ok := rawArgs["published"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("published"))
+		arg1, err = ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["published"] = arg1
 	return args, nil
 }
 
@@ -1881,7 +1890,7 @@ func (ec *executionContext) _Query_episodes(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Episodes(rctx, fc.Args["pagination"].(model.Pagination))
+		return ec.resolvers.Query().Episodes(rctx, fc.Args["pagination"].(model.Pagination), fc.Args["published"].(*bool))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

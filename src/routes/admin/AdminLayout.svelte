@@ -76,7 +76,7 @@
 					<div class="hidden md:block">
 						<div class="ml-10 flex items-baseline space-x-4">
 							<!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-							<AdminHeaderLink linkName="Site Setting" linkTo="/admin/site-config" largeLayout={true} />
+							<!-- <AdminHeaderLink linkName="Site Setting" linkTo="/admin/site-config" largeLayout={true} /> -->
 							<!-- <AdminHeaderLink linkName="Dashboard" linkTo="/admin" largeLayout={true} /> -->
 							<!-- <AdminHeaderLink linkName="Episodes" linkTo="/admin/episode" largeLayout={true} /> -->
 							<!-- <a
@@ -197,11 +197,11 @@
 										id="user-menu-item-0">Your Profile</a
 									>
 									<a
-										href="#"
+										href="/admin/site-setting"
 										class="block px-4 py-2 text-sm text-gray-700"
 										role="menuitem"
 										tabindex="-1"
-										id="user-menu-item-1">Settings</a
+										id="user-menu-item-1">Site-Setting</a
 									>
 									<a
 										href="#"
@@ -263,8 +263,8 @@
 				<div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
 					<!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
 
-					<AdminHeaderLink linkName="Dashboard" linkTo="/admin" />
-					<AdminHeaderLink linkName="Episodes" linkTo="/admin/episode" />
+					<!-- <AdminHeaderLink linkName="Dashboard" linkTo="/admin" />
+					<AdminHeaderLink linkName="Episodes" linkTo="/admin/episode" /> -->
 					<!-- <a
 						href="/admin"
 						class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
@@ -349,9 +349,9 @@
 							>Your Profile</a
 						>
 						<a
-							href="#"
+							href="/admin/site-setting"
 							class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-							>Settings</a
+							>Site-Setting</a
 						>
 						<a
 							href="#"

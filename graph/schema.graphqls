@@ -70,7 +70,7 @@ type DashboardInfo {
 }
 
 type Query {
-	episodes(pagination: Pagination!): EpisodesResult!
+	episodes(pagination: Pagination!, published: Boolean): EpisodesResult!
 	episode(id: ID!): Episode!
 	users(pagination: Pagination!): UsersResult!
 	login(credential: Credential!): LoginData!

@@ -8,7 +8,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"time"
 
 	"crispypod.com/crispypod/db"
@@ -114,11 +113,28 @@ func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *
 
 // ModifySiteConfig is the resolver for the modifySiteConfig field.
 func (r *mutationResolver) ModifySiteConfig(ctx context.Context, input *model.SiteConfigInput) (*model.SiteConfig, error) {
-	panic(fmt.Errorf("not implemented: ModifySiteConfig - modifySiteConfig"))
+	userName := helpers.JWTFromContext(ctx)
+	if len(userName) == 0 {
+		return nil, errors.New("authorization failed")
+	}
+
+	var siteConfig models.SiteConfig
+	if err := db.DB.First(&siteConfig).Error; err != nil {
+		return nil, errors.New("site config not found")
+	}
+
+	siteConfig.SiteDescription = input.SiteDescription
+	siteConfig.SiteFullDescription = input.SiteFullDescription
+	siteConfig.SiteName = input.SiteName
+	siteConfig.SiteUrl = input.SiteURL
+	db.DB.Save(siteConfig)
+
+	return siteConfig.ToGQLSiteConfig(), nil
+
 }
 
 // Episodes is the resolver for the episodes field.
-func (r *queryResolver) Episodes(ctx context.Context, pagination model.Pagination) (*model.EpisodesResult, error) {
+func (r *queryResolver) Episodes(ctx context.Context, pagination model.Pagination, published *bool) (*model.EpisodesResult, error) {
 	var episodes []models.Episode
 	var rtEpisodes []*model.Episode
 	var count int64
