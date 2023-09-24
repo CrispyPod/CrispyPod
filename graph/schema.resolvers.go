@@ -130,11 +130,36 @@ func (r *mutationResolver) ModifySiteConfig(ctx context.Context, input *model.Si
 	db.DB.Save(siteConfig)
 
 	return siteConfig.ToGQLSiteConfig(), nil
+}
 
+// ModifyMe is the resolver for the modifyMe field.
+func (r *mutationResolver) ModifyMe(ctx context.Context, input model.UserInput) (*model.User, error) {
+	userName := helpers.JWTFromContext(ctx)
+	if len(userName) == 0 {
+		return nil, errors.New("authorization failed")
+	}
+
+	var dbJWTUser models.DbUser
+	if err := db.DB.Model(&models.DbUser{UserName: userName}).Find(&dbJWTUser).Error; err != nil {
+		return nil, errors.New(err.Error())
+	}
+
+	dbJWTUser.Email = input.Email
+	dbJWTUser.UserName = input.UserName
+	dbJWTUser.DisplayName = input.DisplayName
+
+	if input.Password != nil {
+		newPassword, _ := helpers.HashPassword(*input.Password)
+		dbJWTUser.Password = newPassword
+	}
+
+	db.DB.Save(dbJWTUser)
+
+	return dbJWTUser.ToGQLUser(), nil
 }
 
 // Episodes is the resolver for the episodes field.
-func (r *queryResolver) Episodes(ctx context.Context, pagination model.Pagination, published *bool) (*model.EpisodesResult, error) {
+func (r *queryResolver) Episodes(ctx context.Context, pagination model.Pagination) (*model.EpisodesResult, error) {
 	var episodes []models.Episode
 	var rtEpisodes []*model.Episode
 	var count int64

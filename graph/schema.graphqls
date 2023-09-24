@@ -70,7 +70,7 @@ type DashboardInfo {
 }
 
 type Query {
-	episodes(pagination: Pagination!, published: Boolean): EpisodesResult!
+	episodes(pagination: Pagination!): EpisodesResult!
 	episode(id: ID!): Episode!
 	users(pagination: Pagination!): UsersResult!
 	login(credential: Credential!): LoginData!
@@ -97,8 +97,16 @@ input SiteConfigInput {
 	siteUrl: String!
 }
 
+input UserInput {
+	email: String!
+	userName: String!
+	displayName: String!
+	password: String
+}
+
 type Mutation {
 	createEpisode(input: NewEpisode): Episode!
 	modifyEpisode(id: ID!, input: NewEpisode): Episode!
 	modifySiteConfig(input: SiteConfigInput): SiteConfig!
+	modifyMe(input: UserInput!): User!
 }

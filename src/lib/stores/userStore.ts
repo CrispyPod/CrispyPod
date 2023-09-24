@@ -1,13 +1,12 @@
-import { writable } from "svelte/store";
-
+import { writable } from 'svelte/store';
 
 function userStore() {
-    const { subscribe, set } = writable(null);
+	const { subscribe, set } = writable<User>();
 
-    return {
-        subscribe,
-        set
-    };
+	return {
+		subscribe,
+		set
+	};
 }
 
-export const user = userStore();
+export const userS = userStore();

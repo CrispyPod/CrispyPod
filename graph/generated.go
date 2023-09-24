@@ -77,6 +77,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateEpisode    func(childComplexity int, input *model.NewEpisode) int
 		ModifyEpisode    func(childComplexity int, id string, input *model.NewEpisode) int
+		ModifyMe         func(childComplexity int, input model.UserInput) int
 		ModifySiteConfig func(childComplexity int, input *model.SiteConfigInput) int
 	}
 
@@ -88,7 +89,7 @@ type ComplexityRoot struct {
 	Query struct {
 		DashboardInfo func(childComplexity int) int
 		Episode       func(childComplexity int, id string) int
-		Episodes      func(childComplexity int, pagination model.Pagination, published *bool) int
+		Episodes      func(childComplexity int, pagination model.Pagination) int
 		Login         func(childComplexity int, credential model.Credential) int
 		Me            func(childComplexity int) int
 		SiteConfig    func(childComplexity int) int
@@ -123,9 +124,10 @@ type MutationResolver interface {
 	CreateEpisode(ctx context.Context, input *model.NewEpisode) (*model.Episode, error)
 	ModifyEpisode(ctx context.Context, id string, input *model.NewEpisode) (*model.Episode, error)
 	ModifySiteConfig(ctx context.Context, input *model.SiteConfigInput) (*model.SiteConfig, error)
+	ModifyMe(ctx context.Context, input model.UserInput) (*model.User, error)
 }
 type QueryResolver interface {
-	Episodes(ctx context.Context, pagination model.Pagination, published *bool) (*model.EpisodesResult, error)
+	Episodes(ctx context.Context, pagination model.Pagination) (*model.EpisodesResult, error)
 	Episode(ctx context.Context, id string) (*model.Episode, error)
 	Users(ctx context.Context, pagination model.Pagination) (*model.UsersResult, error)
 	Login(ctx context.Context, credential model.Credential) (*model.LoginData, error)
@@ -292,6 +294,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ModifyEpisode(childComplexity, args["id"].(string), args["input"].(*model.NewEpisode)), true
 
+	case "Mutation.modifyMe":
+		if e.complexity.Mutation.ModifyMe == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_modifyMe_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ModifyMe(childComplexity, args["input"].(model.UserInput)), true
+
 	case "Mutation.modifySiteConfig":
 		if e.complexity.Mutation.ModifySiteConfig == nil {
 			break
@@ -347,7 +361,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Episodes(childComplexity, args["pagination"].(model.Pagination), args["published"].(*bool)), true
+		return e.complexity.Query.Episodes(childComplexity, args["pagination"].(model.Pagination)), true
 
 	case "Query.login":
 		if e.complexity.Query.Login == nil {
@@ -497,6 +511,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputNewEpisode,
 		ec.unmarshalInputPagination,
 		ec.unmarshalInputSiteConfigInput,
+		ec.unmarshalInputUserInput,
 	)
 	first := true
 
@@ -652,6 +667,21 @@ func (ec *executionContext) field_Mutation_modifyEpisode_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_modifyMe_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UserInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUserInput2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐUserInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_modifySiteConfig_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -709,15 +739,6 @@ func (ec *executionContext) field_Query_episodes_args(ctx context.Context, rawAr
 		}
 	}
 	args["pagination"] = arg0
-	var arg1 *bool
-	if tmp, ok := rawArgs["published"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("published"))
-		arg1, err = ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["published"] = arg1
 	return args, nil
 }
 
@@ -1788,6 +1809,75 @@ func (ec *executionContext) fieldContext_Mutation_modifySiteConfig(ctx context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_modifyMe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_modifyMe(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ModifyMe(rctx, fc.Args["input"].(model.UserInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_modifyMe(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_User_createTime(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "userName":
+				return ec.fieldContext_User_userName(ctx, field)
+			case "displayName":
+				return ec.fieldContext_User_displayName(ctx, field)
+			case "isAdmin":
+				return ec.fieldContext_User_isAdmin(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_modifyMe_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_hasNextPage(ctx, field)
 	if err != nil {
@@ -1890,7 +1980,7 @@ func (ec *executionContext) _Query_episodes(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Episodes(rctx, fc.Args["pagination"].(model.Pagination), fc.Args["published"].(*bool))
+		return ec.resolvers.Query().Episodes(rctx, fc.Args["pagination"].(model.Pagination))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5063,6 +5153,62 @@ func (ec *executionContext) unmarshalInputSiteConfigInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUserInput(ctx context.Context, obj interface{}) (model.UserInput, error) {
+	var it model.UserInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"email", "userName", "displayName", "password"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		case "userName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userName"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserName = data
+		case "displayName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayName = data
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Password = data
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -5304,6 +5450,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "modifySiteConfig":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_modifySiteConfig(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "modifyMe":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_modifyMe(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -6308,6 +6461,11 @@ func (ec *executionContext) marshalNUser2ᚖcrispypodᚗcomᚋcrispypodᚋgraph�
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNUserInput2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐUserInput(ctx context.Context, v interface{}) (model.UserInput, error) {
+	res, err := ec.unmarshalInputUserInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNUsersResult2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐUsersResult(ctx context.Context, sel ast.SelectionSet, v model.UsersResult) graphql.Marshaler {

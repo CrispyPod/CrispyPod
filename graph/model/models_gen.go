@@ -81,6 +81,13 @@ type User struct {
 	IsAdmin     bool   `json:"isAdmin"`
 }
 
+type UserInput struct {
+	Email       string  `json:"email"`
+	UserName    string  `json:"userName"`
+	DisplayName string  `json:"displayName"`
+	Password    *string `json:"password,omitempty"`
+}
+
 type UsersResult struct {
 	Items      []*User   `json:"items"`
 	TotalCount int       `json:"totalCount"`
