@@ -17,6 +17,11 @@ export default defineConfig({
 				target: 'http://localhost:8080/api',
 				changeOrigin: true,
 				rewrite: (path) => path.replace(/^\/api/, '')
+			},
+			'/rss':{
+				target: 'http://localhost:8080/rss',
+				changeOrigin: true,
+				rewrite: (path) => path.replace(/^\/rss/, '')
 			}
 		}
 	}

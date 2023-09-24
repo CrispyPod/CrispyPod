@@ -29,6 +29,8 @@ func main() {
 		gH.ServeHTTP(ctx.Writer, ctx.Request)
 	})
 
+	r.StaticFile("/rss", "./Feed/rss.xml")
+
 	r.POST("/api/audioFile", controllers.AudioFileUpload)
 	r.GET("/api/audioFile/:fileName", controllers.GetAudioFile)
 
