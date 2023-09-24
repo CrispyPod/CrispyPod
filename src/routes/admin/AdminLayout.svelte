@@ -77,8 +77,8 @@
 						<div class="ml-10 flex items-baseline space-x-4">
 							<!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
 							<!-- <AdminHeaderLink linkName="Site Setting" linkTo="/admin/site-config" largeLayout={true} /> -->
-							<!-- <AdminHeaderLink linkName="Dashboard" linkTo="/admin" largeLayout={true} /> -->
-							<!-- <AdminHeaderLink linkName="Episodes" linkTo="/admin/episode" largeLayout={true} /> -->
+							<AdminHeaderLink linkName="Dashboard" linkTo="/admin" largeLayout={true} />
+							<AdminHeaderLink linkName="Episodes" linkTo="/admin/episode" largeLayout={true} />
 							<!-- <a
 								href="/admin"
 								class=" rounded-md px-3 py-2 text-sm font-medium {$page.url.pathname == '/admin'
@@ -263,8 +263,8 @@
 				<div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
 					<!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
 
-					<!-- <AdminHeaderLink linkName="Dashboard" linkTo="/admin" />
-					<AdminHeaderLink linkName="Episodes" linkTo="/admin/episode" /> -->
+					<AdminHeaderLink linkName="Dashboard" linkTo="/admin" />
+					<AdminHeaderLink linkName="Episodes" linkTo="/admin/episode" />
 					<!-- <a
 						href="/admin"
 						class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"

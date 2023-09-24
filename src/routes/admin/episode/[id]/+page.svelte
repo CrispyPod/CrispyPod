@@ -64,7 +64,7 @@
 		var resultJson = await result.json();
 
 		if (resultJson.data != null) {
-			goto('/admin');
+			goto('/admin/episode');
 		} else {
 			errMessage = resultJson.errors[0].message;
 		}

@@ -26,7 +26,7 @@ func (r *mutationResolver) CreateEpisode(ctx context.Context, input *model.NewEp
 	}
 
 	var jwtDbUser models.DbUser
-	if err := db.DB.Model(models.DbUser{UserName: userName}).Find(&jwtDbUser).Error; err != nil {
+	if err := db.DB.Where(models.DbUser{UserName: userName}).Find(&jwtDbUser).Error; err != nil {
 		return nil, errors.New("user not found")
 	}
 
@@ -77,7 +77,7 @@ func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *
 	}
 
 	var dbEpisode models.Episode
-	if err := db.DB.Model(models.Episode{ID: uuid.Must(uuid.Parse(id))}).Find(&dbEpisode).Error; err != nil {
+	if err := db.DB.Where(models.Episode{ID: uuid.Must(uuid.Parse(id))}).Find(&dbEpisode).Error; err != nil {
 		return nil, errors.New("episode not found")
 	}
 
@@ -166,6 +166,7 @@ func (r *queryResolver) Episodes(ctx context.Context, pagination model.Paginatio
 	if userName := helpers.JWTFromContext(ctx); len(userName) == 0 {
 		err := db.DB.
 			Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).
+			Order("create_time DESC").
 			Find(&episodes, models.Episode{EpisodeStatus: models.EpisodeStatus_Published}).
 			Count(&count).Error
 		if err != nil {
@@ -173,6 +174,7 @@ func (r *queryResolver) Episodes(ctx context.Context, pagination model.Paginatio
 		}
 	} else {
 		if err := db.DB.Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).
+			Order("create_time DESC").
 			Find(&episodes).
 			Count(&count).Error; err != nil {
 			return nil, errors.New("episodes not found")
