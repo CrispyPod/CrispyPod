@@ -20,12 +20,14 @@
 </svelte:head>
 
 <SiteLayout>
-	<div class="flex w-full">
-		<div class="grid flex-grow place-items-center">
-			<h1>About</h1>
-		</div>
-		<div>
-			{siteConfig.siteFullDescription}
+	<div class="hero w-full h-96 bg-base-200">
+		<div class="hero-content text-center">
+			<div class="max-w-md">
+				<!-- <h1 class="text-5xl font-bold">{siteConfig == null ? '' : siteConfig.siteName}</h1> -->
+				<!-- <h2 class="text-6xl">About</h2> -->
+				<p class="py-6">{siteConfig == null ? '' : siteConfig.siteFullDescription}</p>
+				<!-- <button class="btn btn-primary">Get Started</button> -->
+			</div>
 		</div>
 	</div>
 </SiteLayout>
