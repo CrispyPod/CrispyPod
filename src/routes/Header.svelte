@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { graphqlRequest } from '$lib/graphqlRequest';
 	import { siteConfigS } from '$lib/stores/siteConfigStore';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
@@ -12,28 +11,9 @@
 	let siteName: string = '';
 
 	onMount(async () => {
+		await siteConfigS.init();
 		const siteConfi = get(siteConfigS);
-		if (siteConfi != null) {
-			siteName = siteConfi.siteName;
-			return;
-		}
-
-		const result = await graphqlRequest(
-			null,
-			`{
-  siteConfig{
-    siteUrl
-    siteName
-    siteDescription
-    siteFullDescription
-  }
-}`
-		);
-		const jsonResp = await result.json();
-		if (jsonResp.data != null) {
-			siteConfigS.set(jsonResp.data.siteConfig);
-			siteName = jsonResp.data.siteConfig.siteName;
-		}
+		siteName = siteConfi.siteName;
 	});
 </script>
 
@@ -78,10 +58,7 @@
 			>
 				About
 			</a>
-			<a
-				href="/rss"
-				class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4"
-			>
+			<a href="/rss" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
 				RSS
 			</a>
 		</div>

@@ -60,6 +60,7 @@ func (r *mutationResolver) CreateEpisode(ctx context.Context, input *model.NewEp
 	}
 
 	db.DB.Create(newEpisode)
+	rssfeed.GenerateRSSFeed()
 
 	return newEpisode.ToGQLEpisode(), nil
 }
@@ -128,6 +129,7 @@ func (r *mutationResolver) ModifySiteConfig(ctx context.Context, input *model.Si
 	siteConfig.SiteName = input.SiteName
 	siteConfig.SiteUrl = input.SiteURL
 	db.DB.Save(siteConfig)
+	rssfeed.GenerateRSSFeed()
 
 	return siteConfig.ToGQLSiteConfig(), nil
 }

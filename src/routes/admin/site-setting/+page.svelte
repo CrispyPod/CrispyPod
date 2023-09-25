@@ -12,25 +12,8 @@
 	let errMessage: string | null = null;
 
 	onMount(async () => {
+		await siteConfigS.init();
 		siteConfig = get(siteConfigS);
-		if (siteConfig == null) {
-			const result = await graphqlRequest(
-				null,
-				`{
-  siteConfig{
-    siteUrl
-    siteName
-    siteDescription
-    siteFullDescription
-  }
-}`
-			);
-			const jsonResp = await result.json();
-			if (jsonResp.data != null) {
-				siteConfigS.set(jsonResp.data.siteConfig);
-				siteConfig = jsonResp.data.siteConfig;
-			}
-		}
 	});
 
 	async function handleFormSubmit(e: SubmitEvent) {

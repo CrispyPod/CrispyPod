@@ -4,11 +4,17 @@
 	import { graphqlRequest } from '$lib/graphqlRequest';
 	import type { Episode } from '$lib/models/episode';
 	import WaveForm from '../../WaveForm.svelte';
+	import type { SiteConfig } from '$lib/models/siteConfig';
+	import { siteConfigS } from '$lib/stores/siteConfigStore';
+	import { get } from 'svelte/store';
 
 	let episodeData: Episode;
+	let siteConfig: SiteConfig;
 	export let data;
 
 	onMount(async () => {
+		await siteConfigS.init();
+		siteConfig = get(siteConfigS);
 		const result = await graphqlRequest(
 			null,
 			`{episode(id:"` +
@@ -23,6 +29,14 @@
 		}
 	});
 </script>
+
+<svelte:head>
+	<title
+		>{episodeData == null ? '' : episodeData.title} - {siteConfig == null
+			? ''
+			: siteConfig.siteName}</title
+	>
+</svelte:head>
 
 <SiteLayout>
 	{#if episodeData != null}

@@ -14,6 +14,7 @@ RUN go mod tidy && go build -o /bin/crispypod
 FROM node:18-alpine
 COPY --from=0 /bin/crispypod /bin/crispypod
 WORKDIR /crispypod
+VOLUME [ "/crispypod/UploadFile" ]
 COPY *.js *.json ./
 COPY src ./src
 COPY static ./static

@@ -54,6 +54,9 @@
 		sum = json_resp.data.episodes.totalCount ?? 0;
 	}
 </script>
+<svelte:head>
+	<title>{siteName}</title>
+</svelte:head>
 
 <SiteLayout>
 	<div class="hero w-full h-96 bg-base-200">

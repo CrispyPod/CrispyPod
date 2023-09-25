@@ -7,7 +7,8 @@
 
 	let fulldesc: string = '';
 
-	onMount(() => {
+	onMount(async () => {
+		await siteConfigS.init();
 		fulldesc = get(siteConfigS).siteFullDescription;
 	});
 </script>
