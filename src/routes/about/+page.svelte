@@ -5,13 +5,19 @@
 	import { get } from 'svelte/store';
 	import { siteConfigS } from '$lib/stores/siteConfigStore';
 
-	let fulldesc: string = '';
+	let siteConfig: SiteConfig;
 
 	onMount(async () => {
 		await siteConfigS.init();
-		fulldesc = get(siteConfigS).siteFullDescription;
+		siteConfig = get(siteConfigS);
 	});
 </script>
+
+<svelte:head>
+	<title>
+		About - {siteConfig == null ? '' : siteConfig.siteName}
+	</title>
+</svelte:head>
 
 <SiteLayout>
 	<div class="flex w-full">
@@ -19,7 +25,7 @@
 			<h1>About</h1>
 		</div>
 		<div>
-			{fulldesc}
+			{siteConfig.siteFullDescription}
 		</div>
 	</div>
 </SiteLayout>

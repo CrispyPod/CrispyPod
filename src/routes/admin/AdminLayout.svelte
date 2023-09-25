@@ -8,6 +8,10 @@
 	import { BreadCombItem } from '$lib/models/breadCombItems';
 	// import { Icon, UserCircle } from 'svelte-hero-icons';
 	import { graphqlRequest } from '$lib/graphqlRequest';
+	// import type { SiteConfig } from '$lib/models/siteConfig';
+	// import { siteConfigS } from '$lib/stores/siteConfigStore';
+
+	// let siteConfig: SiteConfig;
 
 	let showAvatarOption = false;
 	function handleSignOut() {
@@ -17,6 +21,8 @@
 	let breadCombItems: Array<BreadCombItem> = [];
 
 	onMount(async () => {
+		// await siteConfigS.init();
+		// siteConfig = get(siteConfigS);
 		const tokenS = get(token);
 
 		if ($page.url.pathname != '/admin/signin' && tokenS != null) {
@@ -60,13 +66,19 @@
 	export let pageTitle: String;
 </script>
 
+<svelte:head>
+	<title>
+		{pageTitle} - CrispyPod
+	</title>
+</svelte:head>
+
 <div class="min-h-full">
 	<nav class="bg-gray-800">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-16 items-center justify-between">
 				<div class="flex items-center">
 					<div class="flex-shrink-0 text-white font-bold">
-						Crispy Pod
+						CrispyPod
 						<!-- <img
 							class="h-8 w-8"
 							src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
@@ -201,7 +213,7 @@
 										class="block px-4 py-2 text-sm text-gray-700"
 										role="menuitem"
 										tabindex="-1"
-										id="user-menu-item-1">Site-Setting</a
+										id="user-menu-item-1">Site Setting</a
 									>
 									<a
 										href="#"
