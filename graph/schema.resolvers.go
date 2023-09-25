@@ -8,6 +8,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"net/url"
 	"time"
 
 	"crispypod.com/crispypod/db"
@@ -30,10 +31,14 @@ func (r *mutationResolver) CreateEpisode(ctx context.Context, input *model.NewEp
 		return nil, errors.New("user not found")
 	}
 
+	var desc, title string
+	desc, _ = url.QueryUnescape(input.Description)
+	title, _ = url.QueryUnescape(input.Title)
+
 	newEpisode := models.Episode{
 		ID:            uuid.New(),
-		Title:         input.Title,
-		Description:   input.Description,
+		Title:         title,
+		Description:   desc,
 		EpisodeStatus: models.EpisodeStatus_Draft,
 		UserID:        jwtDbUser.ID,
 		CreateTime:    time.Now(),

@@ -33,9 +33,9 @@
 
 		const graphqlStr =
 			`mutation{createEpisode(input: {title:"` +
-			formData.get('title') +
+			encodeURIComponent(formData.get('title')!.toString()) +
 			`",description:"` +
-			formData.get('description') +
+			encodeURIComponent(formData.get('description')!.toString()) +
 			`"` +
 			audioFileField +
 			`}){id,title,description}}`;

@@ -44,7 +44,8 @@
 				',audioFileName:"' +
 				episodeData.audioFileName +
 				'",audioFileUploadName:"' +
-				episodeData.audioFileUploadName+'",';
+				episodeData.audioFileUploadName +
+				'",';
 		}
 
 		let stat = parseInt(formData.get('status')!.toString());
@@ -53,9 +54,9 @@
 			`mutation{  modifyEpisode(id:"` +
 				episodeData.id +
 				`",input: {title:"` +
-				formData.get('title') +
+				encodeURIComponent(formData.get('title')!.toString()) +
 				`",description:"` +
-				formData.get('description') +
+				encodeURIComponent(formData.get('description')!.toString()) +
 				`",episodeStatus:` +
 				stat +
 				audioFileField +
