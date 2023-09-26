@@ -1,4 +1,5 @@
 #!/bin/sh
+export GIN_MODE=release
 
 # start crispypod
 crispypod &

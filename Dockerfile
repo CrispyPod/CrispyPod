@@ -8,7 +8,6 @@ COPY helpers ./helpers
 COPY rssfeed ./rssfeed
 COPY tools ./tools
 COPY main.go go.mod go.sum gqlgen.yml ./
-ENV GIN_MODE=release
 RUN go mod tidy && go build -o /bin/crispypod
 
 FROM node:18-alpine
