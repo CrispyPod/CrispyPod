@@ -19,10 +19,12 @@ func main() {
 	r := gin.Default()
 	r.Use(helpers.JWTMiddleWare())
 
-	pH := playground.Handler("GraphQL", "/graphql")
-	r.GET("/graphql", func(ctx *gin.Context) {
-		pH.ServeHTTP(ctx.Writer, ctx.Request)
-	})
+	if gin.Mode() == "debug" {
+		pH := playground.Handler("GraphQL", "/graphql")
+		r.GET("/graphql", func(ctx *gin.Context) {
+			pH.ServeHTTP(ctx.Writer, ctx.Request)
+		})
+	}
 
 	gH := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 	r.POST("/graphql", func(ctx *gin.Context) {
