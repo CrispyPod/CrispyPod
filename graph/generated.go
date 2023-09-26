@@ -49,6 +49,10 @@ type ComplexityRoot struct {
 		EpisodeCount func(childComplexity int) int
 	}
 
+	DeletionResult struct {
+		Result func(childComplexity int) int
+	}
+
 	Episode struct {
 		AudioFileDuration   func(childComplexity int) int
 		AudioFileName       func(childComplexity int) int
@@ -76,6 +80,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreateEpisode    func(childComplexity int, input *model.NewEpisode) int
+		DeleteEpisode    func(childComplexity int, id string) int
 		ModifyEpisode    func(childComplexity int, id string, input *model.NewEpisode) int
 		ModifyMe         func(childComplexity int, input model.UserInput) int
 		ModifySiteConfig func(childComplexity int, input *model.SiteConfigInput) int
@@ -125,6 +130,7 @@ type MutationResolver interface {
 	ModifyEpisode(ctx context.Context, id string, input *model.NewEpisode) (*model.Episode, error)
 	ModifySiteConfig(ctx context.Context, input *model.SiteConfigInput) (*model.SiteConfig, error)
 	ModifyMe(ctx context.Context, input model.UserInput) (*model.User, error)
+	DeleteEpisode(ctx context.Context, id string) (*model.DeletionResult, error)
 }
 type QueryResolver interface {
 	Episodes(ctx context.Context, pagination model.Pagination) (*model.EpisodesResult, error)
@@ -157,6 +163,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DashboardInfo.EpisodeCount(childComplexity), true
+
+	case "DeletionResult.result":
+		if e.complexity.DeletionResult.Result == nil {
+			break
+		}
+
+		return e.complexity.DeletionResult.Result(childComplexity), true
 
 	case "Episode.audioFileDuration":
 		if e.complexity.Episode.AudioFileDuration == nil {
@@ -281,6 +294,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateEpisode(childComplexity, args["input"].(*model.NewEpisode)), true
+
+	case "Mutation.deleteEpisode":
+		if e.complexity.Mutation.DeleteEpisode == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteEpisode_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteEpisode(childComplexity, args["id"].(string)), true
 
 	case "Mutation.modifyEpisode":
 		if e.complexity.Mutation.ModifyEpisode == nil {
@@ -643,6 +668,21 @@ func (ec *executionContext) field_Mutation_createEpisode_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteEpisode_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_modifyEpisode_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -849,6 +889,50 @@ func (ec *executionContext) fieldContext_DashboardInfo_episodeCount(ctx context.
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeletionResult_result(ctx context.Context, field graphql.CollectedField, obj *model.DeletionResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeletionResult_result(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Result, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeletionResult_result(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeletionResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1872,6 +1956,65 @@ func (ec *executionContext) fieldContext_Mutation_modifyMe(ctx context.Context, 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_modifyMe_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteEpisode(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteEpisode(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteEpisode(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.DeletionResult)
+	fc.Result = res
+	return ec.marshalNDeletionResult2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐDeletionResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteEpisode(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "result":
+				return ec.fieldContext_DeletionResult_result(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DeletionResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteEpisode_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -5256,6 +5399,45 @@ func (ec *executionContext) _DashboardInfo(ctx context.Context, sel ast.Selectio
 	return out
 }
 
+var deletionResultImplementors = []string{"DeletionResult"}
+
+func (ec *executionContext) _DeletionResult(ctx context.Context, sel ast.SelectionSet, obj *model.DeletionResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deletionResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeletionResult")
+		case "result":
+			out.Values[i] = ec._DeletionResult_result(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var episodeImplementors = []string{"Episode"}
 
 func (ec *executionContext) _Episode(ctx context.Context, sel ast.SelectionSet, obj *model.Episode) graphql.Marshaler {
@@ -5457,6 +5639,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "modifyMe":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_modifyMe(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteEpisode":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteEpisode(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -6259,6 +6448,20 @@ func (ec *executionContext) marshalNDashboardInfo2ᚖcrispypodᚗcomᚋcrispypod
 		return graphql.Null
 	}
 	return ec._DashboardInfo(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDeletionResult2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐDeletionResult(ctx context.Context, sel ast.SelectionSet, v model.DeletionResult) graphql.Marshaler {
+	return ec._DeletionResult(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDeletionResult2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐDeletionResult(ctx context.Context, sel ast.SelectionSet, v *model.DeletionResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DeletionResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNEpisode2crispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐEpisode(ctx context.Context, sel ast.SelectionSet, v model.Episode) graphql.Marshaler {

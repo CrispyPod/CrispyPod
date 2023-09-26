@@ -11,6 +11,10 @@ type DashboardInfo struct {
 	EpisodeCount int `json:"episodeCount"`
 }
 
+type DeletionResult struct {
+	Result bool `json:"result"`
+}
+
 type Episode struct {
 	ID                  string  `json:"id"`
 	Title               string  `json:"title"`

@@ -104,9 +104,14 @@ input UserInput {
 	password: String
 }
 
+type DeletionResult{
+	result:Boolean!
+}
+
 type Mutation {
 	createEpisode(input: NewEpisode): Episode!
 	modifyEpisode(id: ID!, input: NewEpisode): Episode!
 	modifySiteConfig(input: SiteConfigInput): SiteConfig!
 	modifyMe(input: UserInput!): User!
+	deleteEpisode(id: ID!): DeletionResult!
 }

@@ -11,7 +11,7 @@ export class Episode {
 	description: string;
 	createTime: Date;
 	publishTime: Date | null;
-	episodeStatus: number;
+	episodeStatus: EpisodeState;
 	// audioFiles: AudioFile[] = [];
 	thumbnailFileName: string | null = null;
 
@@ -19,17 +19,19 @@ export class Episode {
 	audioFileUploadName: string | null = null;
 	audioFileDuration: number | null = null;
 
+	// episodeStatusString: string = '';
+
 	constructor(
 		id: string,
 		title: string,
 		description: string,
 		createTime: Date,
-		episodeState: number,
+		episodeStatus: EpisodeState,
 		publishTime: Date | null
 	) {
 		this.id = id;
 		this.title = title;
-		this.episodeStatus = episodeState;
+		this.episodeStatus = episodeStatus;
 		this.description = description;
 		this.createTime = createTime;
 		this.publishTime = publishTime;

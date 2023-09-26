@@ -31,17 +31,18 @@
 				perPage +
 				`}){
     items{
-      id,
-      title,
-	  description,
-      createTime,
-      thumbnailFileName,
-    },
-    totalCount,
+      id
+      title
+	  description
+      createTime
+	  episodeStatus
+      thumbnailFileName
+    }
+    totalCount
     pageInfo{
-      hasNextPage,
+      hasNextPage
       hasPreviousPage
-    },
+    }
   } 
 }`
 		);
@@ -61,24 +62,15 @@
 
 	function handlePageChange(pageIndex: number) {
 		// curPage = pageIndex;
-		getPagedData(pageIndex-1);
+		getPagedData(pageIndex - 1);
 	}
 </script>
 
 <AdminLayout pageTitle="Episodes">
 	<span slot="actions">
 		<div class="mt-5 flex lg:ml-4 lg:mt-0">
-
 			<a class="sm:ml-3" href="/admin/episode/new">
-				<button
-					type="button"
-					class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-				>
-					<div class="mr-1.5">
-						<Icon src={Plus} size="16" />
-					</div>
-					New
-				</button>
+				<button class="btn btn-active btn-primary"> <Icon src={Plus} size="24" />New</button>
 			</a>
 
 			<!-- Dropdown -->
@@ -150,5 +142,5 @@
 			<EpisodeItem episode={p} />
 		{/each}
 	</ul>
-	<Pager {handlePageChange}  {sum} {perPage} {hasNextPage} {hasPreviousPage} />
+	<Pager {handlePageChange} {sum} {perPage} {hasNextPage} {hasPreviousPage} />
 </AdminLayout>

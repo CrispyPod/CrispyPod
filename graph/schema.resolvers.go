@@ -165,6 +165,26 @@ func (r *mutationResolver) ModifyMe(ctx context.Context, input model.UserInput) 
 	return dbJWTUser.ToGQLUser(), nil
 }
 
+// DeleteEpisode is the resolver for the deleteEpisode field.
+func (r *mutationResolver) DeleteEpisode(ctx context.Context, id string) (*model.DeletionResult, error) {
+	// panic(fmt.Errorf("not implemented: DeleteEpisode - deleteEpisode"))
+	userName := helpers.JWTFromContext(ctx)
+	if len(userName) == 0 {
+		return nil, errors.New("authorization failed")
+	}
+
+	var dbEpisode models.Episode
+	if err := db.DB.Find(&dbEpisode, models.Episode{ID: uuid.Must(uuid.Parse(id))}).Error; err != nil {
+		return nil, errors.New("episode not found")
+	}
+
+	if err := db.DB.Delete(dbEpisode).Error; err != nil {
+		return nil, errors.New("failed to delete episode")
+	}
+
+	return &model.DeletionResult{Result: true}, nil
+}
+
 // Episodes is the resolver for the episodes field.
 func (r *queryResolver) Episodes(ctx context.Context, pagination model.Pagination) (*model.EpisodesResult, error) {
 	var episodes []models.Episode
