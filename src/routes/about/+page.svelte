@@ -25,7 +25,7 @@
 			<div class="max-w-md">
 				<!-- <h1 class="text-5xl font-bold">{siteConfig == null ? '' : siteConfig.siteName}</h1> -->
 				<!-- <h2 class="text-6xl">About</h2> -->
-				<p class="py-6">{siteConfig == null ? '' : siteConfig.siteFullDescription}</p>
+				<p class="py-6">{siteConfig == null ? '' : siteConfig.siteDescription}</p>
 				<!-- <button class="btn btn-primary">Get Started</button> -->
 			</div>
 		</div>

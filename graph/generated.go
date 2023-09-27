@@ -102,11 +102,10 @@ type ComplexityRoot struct {
 	}
 
 	SiteConfig struct {
-		ID                  func(childComplexity int) int
-		SiteDescription     func(childComplexity int) int
-		SiteFullDescription func(childComplexity int) int
-		SiteName            func(childComplexity int) int
-		SiteURL             func(childComplexity int) int
+		ID              func(childComplexity int) int
+		SiteDescription func(childComplexity int) int
+		SiteName        func(childComplexity int) int
+		SiteURL         func(childComplexity int) int
 	}
 
 	User struct {
@@ -439,13 +438,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SiteConfig.SiteDescription(childComplexity), true
-
-	case "SiteConfig.siteFullDescription":
-		if e.complexity.SiteConfig.SiteFullDescription == nil {
-			break
-		}
-
-		return e.complexity.SiteConfig.SiteFullDescription(childComplexity), true
 
 	case "SiteConfig.siteName":
 		if e.complexity.SiteConfig.SiteName == nil {
@@ -1871,8 +1863,6 @@ func (ec *executionContext) fieldContext_Mutation_modifySiteConfig(ctx context.C
 				return ec.fieldContext_SiteConfig_siteName(ctx, field)
 			case "siteDescription":
 				return ec.fieldContext_SiteConfig_siteDescription(ctx, field)
-			case "siteFullDescription":
-				return ec.fieldContext_SiteConfig_siteFullDescription(ctx, field)
 			case "siteUrl":
 				return ec.fieldContext_SiteConfig_siteUrl(ctx, field)
 			}
@@ -2478,8 +2468,6 @@ func (ec *executionContext) fieldContext_Query_siteConfig(ctx context.Context, f
 				return ec.fieldContext_SiteConfig_siteName(ctx, field)
 			case "siteDescription":
 				return ec.fieldContext_SiteConfig_siteDescription(ctx, field)
-			case "siteFullDescription":
-				return ec.fieldContext_SiteConfig_siteFullDescription(ctx, field)
 			case "siteUrl":
 				return ec.fieldContext_SiteConfig_siteUrl(ctx, field)
 			}
@@ -2786,50 +2774,6 @@ func (ec *executionContext) _SiteConfig_siteDescription(ctx context.Context, fie
 }
 
 func (ec *executionContext) fieldContext_SiteConfig_siteDescription(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "SiteConfig",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _SiteConfig_siteFullDescription(ctx context.Context, field graphql.CollectedField, obj *model.SiteConfig) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SiteConfig_siteFullDescription(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SiteFullDescription, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_SiteConfig_siteFullDescription(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SiteConfig",
 		Field:      field,
@@ -5247,7 +5191,7 @@ func (ec *executionContext) unmarshalInputSiteConfigInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"siteName", "siteDescription", "siteFullDescription", "siteUrl"}
+	fieldsInOrder := [...]string{"siteName", "siteDescription", "siteUrl"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -5272,15 +5216,6 @@ func (ec *executionContext) unmarshalInputSiteConfigInput(ctx context.Context, o
 				return it, err
 			}
 			it.SiteDescription = data
-		case "siteFullDescription":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("siteFullDescription"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SiteFullDescription = data
 		case "siteUrl":
 			var err error
 
@@ -5944,11 +5879,6 @@ func (ec *executionContext) _SiteConfig(ctx context.Context, sel ast.SelectionSe
 			}
 		case "siteDescription":
 			out.Values[i] = ec._SiteConfig_siteDescription(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "siteFullDescription":
-			out.Values[i] = ec._SiteConfig_siteFullDescription(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

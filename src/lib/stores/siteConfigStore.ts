@@ -15,7 +15,6 @@ function siteConfigStore() {
 		siteUrl
 		siteName
 		siteDescription
-		siteFullDescription
 	  }
 	}`
 			);

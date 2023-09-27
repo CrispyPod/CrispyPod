@@ -62,18 +62,16 @@ type Pagination struct {
 }
 
 type SiteConfig struct {
-	ID                  string `json:"id"`
-	SiteName            string `json:"siteName"`
-	SiteDescription     string `json:"siteDescription"`
-	SiteFullDescription string `json:"siteFullDescription"`
-	SiteURL             string `json:"siteUrl"`
+	ID              string `json:"id"`
+	SiteName        string `json:"siteName"`
+	SiteDescription string `json:"siteDescription"`
+	SiteURL         string `json:"siteUrl"`
 }
 
 type SiteConfigInput struct {
-	SiteName            string `json:"siteName"`
-	SiteDescription     string `json:"siteDescription"`
-	SiteFullDescription string `json:"siteFullDescription"`
-	SiteURL             string `json:"siteUrl"`
+	SiteName        string `json:"siteName"`
+	SiteDescription string `json:"siteDescription"`
+	SiteURL         string `json:"siteUrl"`
 }
 
 type User struct {

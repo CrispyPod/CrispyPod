@@ -27,15 +27,12 @@
 				formData.get('SiteName') +
 				`",siteDescription:"` +
 				formData.get('SiteDescription') +
-				`",siteFullDescription:"` +
-				formData.get('SiteFullDescription') +
 				`",siteUrl:"` +
 				formData.get('SiteUrl') +
 				`"}){
     siteUrl
     siteName
     siteDescription
-    siteFullDescription
   }
 }`
 		);
@@ -65,23 +62,9 @@
 				class="input input-bordered w-full max-w-xs"
 			/>
 
-			<label class="label" for="SiteDescription">
-				<span class="label-text text-sm font-medium leading-6 text-gray-900"
-					>Podcast short description</span
-				>
-			</label>
-			<input
-				id="SiteDescription"
-				name="SiteDescription"
-				type="text"
-				placeholder="Type here"
-				value={siteConfig == null ? '' : siteConfig.siteDescription}
-				class="input input-bordered w-full max-w-xs"
-			/>
-
 			<label class="label" for="SiteUrl">
 				<span class="label-text text-sm font-medium leading-6 text-gray-900"
-					>Podcast short description</span
+					>Podcast Url</span
 				>
 			</label>
 			<input
@@ -94,15 +77,15 @@
 			/>
 		</div>
 
-		<label class="label" for="SiteFullDescription">
+		<label class="label" for="SiteDescription">
 			<span class="label-text text-sm font-medium leading-6 text-gray-900"
-				>Podcast full description</span
+				>Podcast description</span
 			>
 		</label>
 		<textarea
-			id="SiteFullDescription"
-			name="SiteFullDescription"
-			value={siteConfig == null ? '' : siteConfig.siteFullDescription}
+			id="SiteDescription"
+			name="SiteDescription"
+			value={siteConfig == null ? '' : siteConfig.siteDescription}
 			class="textarea textarea-bordered w-full"
 			placeholder="Type here"
 		/>
@@ -118,11 +101,11 @@
 					</div>
 				</div>
 			{/if}
-			<a href="/admin" type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</a
+			<a href="/admin" type="button" class="btn">Cancel</a
 			>
 			<button
 				type="submit"
-				class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+				class="btn btn-primary"
 				>Save</button
 			>
 		</div>

@@ -6,19 +6,17 @@ import (
 )
 
 type SiteConfig struct {
-	ID                  uuid.UUID `gorm:"type:uuid;primary_key"`
-	SiteName            string
-	SiteDescription     string
-	SiteFullDescription string
-	SiteUrl             string
+	ID              uuid.UUID `gorm:"type:uuid;primary_key"`
+	SiteName        string
+	SiteDescription string
+	SiteUrl         string
 }
 
 func (siteConfig *SiteConfig) ToGQLSiteConfig() *model.SiteConfig {
 	return &model.SiteConfig{
-		ID:                  siteConfig.ID.String(),
-		SiteName:            siteConfig.SiteName,
-		SiteDescription:     siteConfig.SiteDescription,
-		SiteFullDescription: siteConfig.SiteFullDescription,
-		SiteURL:             siteConfig.SiteUrl,
+		ID:              siteConfig.ID.String(),
+		SiteName:        siteConfig.SiteName,
+		SiteDescription: siteConfig.SiteDescription,
+		SiteURL:         siteConfig.SiteUrl,
 	}
 }

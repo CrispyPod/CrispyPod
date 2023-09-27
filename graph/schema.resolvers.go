@@ -87,8 +87,10 @@ func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *
 		return nil, errors.New("episode not found")
 	}
 
-	dbEpisode.Title = input.Title
-	dbEpisode.Description = input.Description
+	title, _ := url.QueryUnescape(input.Title)
+	description, _ := url.QueryUnescape(input.Description)
+	dbEpisode.Title = title
+	dbEpisode.Description = description
 	dbEpisode.EpisodeStatus = models.EpisodeStatusType(*input.EpisodeStatus)
 
 	if input.AudioFileName != nil {
@@ -130,7 +132,6 @@ func (r *mutationResolver) ModifySiteConfig(ctx context.Context, input *model.Si
 	}
 
 	siteConfig.SiteDescription = input.SiteDescription
-	siteConfig.SiteFullDescription = input.SiteFullDescription
 	siteConfig.SiteName = input.SiteName
 	siteConfig.SiteUrl = input.SiteURL
 	db.DB.Save(siteConfig)

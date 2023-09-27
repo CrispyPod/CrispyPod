@@ -70,8 +70,68 @@
 			errMessage = resultJson.errors[0].message;
 		}
 	}
+
+	function handleDelete() {
+		if (fetchedEpisode.id.length == 0) {
+			return;
+		}
+		let a: any = document.getElementById('confirmDeleteModal');
+		a.showModal();
+	}
+
+	async function confirmDelete() {
+		if (fetchedEpisode.id.length == 0) {
+			return;
+		}
+
+		const tokenS = get(token);
+		let result = await graphqlRequest(
+			tokenS,
+			`mutation{
+  deleteEpisode(id:"` +
+				fetchedEpisode.id +
+				`"){
+    result
+  }
+}`
+		);
+
+		const resultJson = await result.json();
+		if (resultJson.data != null && resultJson.data.deleteEpisode.result) {
+			goto('/admin/episode');
+		} else {
+			try {
+				errMessage = resultJson.errors[0].message;
+			} catch (e) {
+				errMessage = 'failed to delete episode';
+			}
+		}
+	}
 </script>
 
 <AdminLayout pageTitle="Edit episode">
+	<span slot="actions">
+		<button class="btn btn-error" on:click|preventDefault={handleDelete}>Delete</button>
+	</span>
 	<EpisodeForm {handleSubmit} episodeData={fetchedEpisode} {errMessage} />
 </AdminLayout>
+
+{#if fetchedEpisode != null}
+	<dialog id="confirmDeleteModal" class="modal modal-bottom sm:modal-middle">
+		<div class="modal-box">
+			<h3 class="font-bold text-lg alert alert-error my-4">Delete confirm</h3>
+			<p>Are you sure you want to delete podcast titled</p>
+			<br />
+			<h2 class="font-bold text-lg">{fetchedEpisode.title}</h2>
+			<br />
+			<p>Deletion can not be undone.</p>
+			<div class="modal-action">
+				<form method="dialog">
+					<button class="btn btn-error" on:click={confirmDelete}>Confirm</button>
+					<!-- if there is a button in form, it will close the modal -->
+					<button class="btn">Close</button>
+				</form>
+			</div>
+		</div>
+	</dialog>
+{/if}

@@ -77,41 +77,9 @@
 		fileUploadedAndNotSaved = true;
 	}
 
-	function handleDelete() {
-		if (episodeData.id.length == 0) {
-			return;
-		}
-		let a: any = document.getElementById('confirmDeleteModal');
-		a.showModal();
-	}
-
-	async function confirmDelete() {
-		if (episodeData.id.length == 0) {
-			return;
-		}
-
-		const tokenS = get(token);
-		let result = await graphqlRequest(
-			tokenS,
-			`mutation{
-  deleteEpisode(id:"` +
-				episodeData.id +
-				`"){
-    result
-  }
-}`
-		);
-
-		const resultJson = await result.json();
-		if (resultJson.data != null && resultJson.data.deleteEpisode.result) {
-			goto('/admin/episode');
-		} else {
-			try {
-				errMessage = resultJson.errors[0].message;
-			} catch (e) {
-				errMessage = 'failed to delete episode';
-			}
-		}
+	function handleReupload() {
+		episodeData!.audioFileName = null;
+		episodeData!.audioFileUploadName = null;
 	}
 </script>
 
@@ -166,6 +134,13 @@
 					Please hit save so that changes are committed.
 				{/if}
 				<WaveForm fileUrl="/api/audioFile/{episodeData.audioFileName}" />
+
+				<div class="w-full flex">
+					<button
+						class="btn btn-outline btn-secondary ml-auto"
+						on:click|preventDefault={handleReupload}>Reuplaod</button
+					>
+				</div>
 			{/if}
 
 			<div class="mt-10 space-y-10">
@@ -225,26 +200,5 @@
 		{/if}
 		<a href="/admin/episode" type="button" class="btn btn-active">Cancel</a>
 		<button type="submit" class="btn btn-active btn-primary">Save</button>
-		{#if episodeData.id.length > 0}
-			<button class="btn btn-error" on:click|preventDefault={handleDelete}>Delete</button>
-		{/if}
 	</div>
 </form>
-
-<dialog id="confirmDeleteModal" class="modal modal-bottom sm:modal-middle">
-	<div class="modal-box">
-		<h3 class="font-bold text-lg alert alert-error my-4">Delete confirm</h3>
-		<p>Are you sure you want to delete podcast titled</p>
-		<br />
-		<h2 class="font-bold text-lg">{episodeData.title}</h2>
-		<br />
-		<p>Deletion can not be undone.</p>
-		<div class="modal-action">
-			<form method="dialog">
-				<button class="btn btn-error" on:click={confirmDelete}>Confirm</button>
-				<!-- if there is a button in form, it will close the modal -->
-				<button class="btn">Close</button>
-			</form>
-		</div>
-	</div>
-</dialog>

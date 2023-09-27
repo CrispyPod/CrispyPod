@@ -30,7 +30,6 @@ type SiteConfig {
 	id: ID!
 	siteName: String!
 	siteDescription: String!
-	siteFullDescription: String!
 	siteUrl: String!
 }
 
@@ -93,7 +92,6 @@ input NewEpisode {
 input SiteConfigInput {
 	siteName: String!
 	siteDescription: String!
-	siteFullDescription: String!
 	siteUrl: String!
 }
 
