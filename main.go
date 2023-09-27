@@ -1,15 +1,19 @@
 package main
 
 import (
+	"time"
+
 	"crispypod.com/crispypod/controllers"
 	"crispypod.com/crispypod/db"
 	"crispypod.com/crispypod/graph"
 	"crispypod.com/crispypod/helpers"
 	"crispypod.com/crispypod/rssfeed"
+	"crispypod.com/crispypod/schedule"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-gonic/gin"
+	"github.com/go-co-op/gocron"
 )
 
 func main() {
@@ -37,6 +41,10 @@ func main() {
 	r.GET("/api/audioFile/:fileName", controllers.GetAudioFile)
 
 	rssfeed.GenerateRSSFeed()
+
+	s := gocron.NewScheduler(time.UTC)
+	s.Every(1).Day().At("0:00").Do(schedule.ClearAudioFile)
+	s.StartAsync()
 
 	r.Run()
 }

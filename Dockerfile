@@ -7,6 +7,7 @@ COPY models ./models
 COPY helpers ./helpers
 COPY rssfeed ./rssfeed
 COPY tools ./tools
+COPY schedule ./schedule
 COPY main.go go.mod go.sum gqlgen.yml ./
 RUN go mod tidy && go build -o /bin/crispypod
 
