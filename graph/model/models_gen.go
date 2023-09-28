@@ -40,6 +40,17 @@ type LoginData struct {
 	Token string `json:"token"`
 }
 
+type ModifyEpisodeInput struct {
+	Title                   *string `json:"title,omitempty"`
+	Description             *string `json:"description,omitempty"`
+	EpisodeStatus           *int    `json:"episodeStatus,omitempty"`
+	AudioFileName           *string `json:"audioFileName,omitempty"`
+	AudioFileUploadName     *string `json:"audioFileUploadName,omitempty"`
+	AudioFileDuration       *int    `json:"audioFileDuration,omitempty"`
+	ThumbnailFileName       *string `json:"thumbnailFileName,omitempty"`
+	ThumbnailFileUploadName *string `json:"thumbnailFileUploadName,omitempty"`
+}
+
 type NewEpisode struct {
 	Title                   string  `json:"title"`
 	Description             string  `json:"description"`

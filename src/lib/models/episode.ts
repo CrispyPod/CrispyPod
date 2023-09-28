@@ -14,6 +14,7 @@ export class Episode {
 	episodeStatus: EpisodeState;
 	// audioFiles: AudioFile[] = [];
 	thumbnailFileName: string | null = null;
+	thumbnailUploadName: string | null = null;
 
 	audioFileName: string | null = null;
 	audioFileUploadName: string | null = null;

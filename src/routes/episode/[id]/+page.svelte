@@ -47,7 +47,9 @@
 			<div class="card lg:card-side bg-base-100 shadow-xl m-10">
 				<img
 					class="w-80 h-80"
-					src={episodeData.thumbnailFileName ?? '/EpisodeDefaultThumbnailSquare.png'}
+					src={episodeData.thumbnailFileName
+						? '/api/thumbnail/' + episodeData.thumbnailFileName
+						: '/EpisodeDefaultThumbnailSquare.png'}
 					alt={episodeData.title}
 				/>
 

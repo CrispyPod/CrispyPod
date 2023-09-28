@@ -71,7 +71,7 @@ func (r *mutationResolver) CreateEpisode(ctx context.Context, input *model.NewEp
 }
 
 // ModifyEpisode is the resolver for the modifyEpisode field.
-func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *model.NewEpisode) (*model.Episode, error) {
+func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *model.ModifyEpisodeInput) (*model.Episode, error) {
 	userName := helpers.JWTFromContext(ctx)
 	if len(userName) == 0 {
 		return nil, errors.New("authorization failed")
@@ -87,11 +87,19 @@ func (r *mutationResolver) ModifyEpisode(ctx context.Context, id string, input *
 		return nil, errors.New("episode not found")
 	}
 
-	title, _ := url.QueryUnescape(input.Title)
-	description, _ := url.QueryUnescape(input.Description)
-	dbEpisode.Title = title
-	dbEpisode.Description = description
-	dbEpisode.EpisodeStatus = models.EpisodeStatusType(*input.EpisodeStatus)
+	if input.Title != nil {
+		title, _ := url.QueryUnescape(*input.Title)
+		dbEpisode.Title = title
+	}
+
+	if input.Description != nil {
+		description, _ := url.QueryUnescape(*input.Description)
+		dbEpisode.Description = description
+	}
+
+	if input.EpisodeStatus != nil {
+		dbEpisode.EpisodeStatus = models.EpisodeStatusType(*input.EpisodeStatus)
+	}
 
 	if input.AudioFileName != nil {
 		dbEpisode.AudioFileName = sql.NullString{String: *input.AudioFileName, Valid: true}

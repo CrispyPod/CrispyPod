@@ -81,7 +81,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateEpisode    func(childComplexity int, input *model.NewEpisode) int
 		DeleteEpisode    func(childComplexity int, id string) int
-		ModifyEpisode    func(childComplexity int, id string, input *model.NewEpisode) int
+		ModifyEpisode    func(childComplexity int, id string, input *model.ModifyEpisodeInput) int
 		ModifyMe         func(childComplexity int, input model.UserInput) int
 		ModifySiteConfig func(childComplexity int, input *model.SiteConfigInput) int
 	}
@@ -126,7 +126,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateEpisode(ctx context.Context, input *model.NewEpisode) (*model.Episode, error)
-	ModifyEpisode(ctx context.Context, id string, input *model.NewEpisode) (*model.Episode, error)
+	ModifyEpisode(ctx context.Context, id string, input *model.ModifyEpisodeInput) (*model.Episode, error)
 	ModifySiteConfig(ctx context.Context, input *model.SiteConfigInput) (*model.SiteConfig, error)
 	ModifyMe(ctx context.Context, input model.UserInput) (*model.User, error)
 	DeleteEpisode(ctx context.Context, id string) (*model.DeletionResult, error)
@@ -316,7 +316,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ModifyEpisode(childComplexity, args["id"].(string), args["input"].(*model.NewEpisode)), true
+		return e.complexity.Mutation.ModifyEpisode(childComplexity, args["id"].(string), args["input"].(*model.ModifyEpisodeInput)), true
 
 	case "Mutation.modifyMe":
 		if e.complexity.Mutation.ModifyMe == nil {
@@ -525,6 +525,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCredential,
+		ec.unmarshalInputModifyEpisodeInput,
 		ec.unmarshalInputNewEpisode,
 		ec.unmarshalInputPagination,
 		ec.unmarshalInputSiteConfigInput,
@@ -687,10 +688,10 @@ func (ec *executionContext) field_Mutation_modifyEpisode_args(ctx context.Contex
 		}
 	}
 	args["id"] = arg0
-	var arg1 *model.NewEpisode
+	var arg1 *model.ModifyEpisodeInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalONewEpisode2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐNewEpisode(ctx, tmp)
+		arg1, err = ec.unmarshalOModifyEpisodeInput2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐModifyEpisodeInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1751,7 +1752,7 @@ func (ec *executionContext) _Mutation_modifyEpisode(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ModifyEpisode(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.NewEpisode))
+		return ec.resolvers.Mutation().ModifyEpisode(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.ModifyEpisodeInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5054,6 +5055,98 @@ func (ec *executionContext) unmarshalInputCredential(ctx context.Context, obj in
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputModifyEpisodeInput(ctx context.Context, obj interface{}) (model.ModifyEpisodeInput, error) {
+	var it model.ModifyEpisodeInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"title", "description", "episodeStatus", "audioFileName", "audioFileUploadName", "audioFileDuration", "thumbnailFileName", "thumbnailFileUploadName"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Title = data
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
+		case "episodeStatus":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("episodeStatus"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EpisodeStatus = data
+		case "audioFileName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("audioFileName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AudioFileName = data
+		case "audioFileUploadName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("audioFileUploadName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AudioFileUploadName = data
+		case "audioFileDuration":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("audioFileDuration"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AudioFileDuration = data
+		case "thumbnailFileName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnailFileName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ThumbnailFileName = data
+		case "thumbnailFileUploadName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnailFileUploadName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ThumbnailFileUploadName = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewEpisode(ctx context.Context, obj interface{}) (model.NewEpisode, error) {
 	var it model.NewEpisode
 	asMap := map[string]interface{}{}
@@ -6908,6 +7001,14 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	}
 	res := graphql.MarshalInt(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOModifyEpisodeInput2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐModifyEpisodeInput(ctx context.Context, v interface{}) (*model.ModifyEpisodeInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputModifyEpisodeInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalONewEpisode2ᚖcrispypodᚗcomᚋcrispypodᚋgraphᚋmodelᚐNewEpisode(ctx context.Context, v interface{}) (*model.NewEpisode, error) {

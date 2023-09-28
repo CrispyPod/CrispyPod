@@ -40,6 +40,9 @@ func main() {
 	r.POST("/api/audioFile", controllers.AudioFileUpload)
 	r.GET("/api/audioFile/:fileName", controllers.GetAudioFile)
 
+	r.POST("/api/thumbnail", controllers.ThumbnailUpload)
+	r.GET("/api/thumbnail/:fileName", controllers.GetThumbnailFile)
+
 	rssfeed.GenerateRSSFeed()
 
 	s := gocron.NewScheduler(time.UTC)

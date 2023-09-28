@@ -89,6 +89,17 @@ input NewEpisode {
 	thumbnailFileUploadName: String
 }
 
+input ModifyEpisodeInput{
+	title: String
+	description: String
+	episodeStatus: Int
+	audioFileName: String
+	audioFileUploadName: String
+	audioFileDuration: Int
+	thumbnailFileName: String
+	thumbnailFileUploadName: String
+}
+
 input SiteConfigInput {
 	siteName: String!
 	siteDescription: String!
@@ -108,7 +119,7 @@ type DeletionResult{
 
 type Mutation {
 	createEpisode(input: NewEpisode): Episode!
-	modifyEpisode(id: ID!, input: NewEpisode): Episode!
+	modifyEpisode(id: ID!, input: ModifyEpisodeInput): Episode!
 	modifySiteConfig(input: SiteConfigInput): SiteConfig!
 	modifyMe(input: UserInput!): User!
 	deleteEpisode(id: ID!): DeletionResult!

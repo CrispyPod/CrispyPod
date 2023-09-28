@@ -62,7 +62,12 @@
 			<a href="/episode/{e.id}">
 				<div class="card w-64 md:w-96 shadow-xl m-10 bg-base-200">
 					<figure>
-						<img src={e.thumbnailFileName ?? '/EpisodeDefaultThumbnail.png'} alt={e.title} />
+						<img
+							src={e.thumbnailFileName
+								? '/api/thumbnail/' + e.thumbnailFileName
+								: '/EpisodeDefaultThumbnailSquare.png'}
+							alt={e.title}
+						/>
 					</figure>
 					<div class="card-body">
 						<h2 class="card-title">
