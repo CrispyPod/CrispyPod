@@ -203,16 +203,21 @@ func (r *queryResolver) Episodes(ctx context.Context, pagination model.Paginatio
 		err := db.DB.
 			Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).
 			Order("create_time DESC").
-			Find(&episodes, models.Episode{EpisodeStatus: models.EpisodeStatus_Published}).
-			Count(&count).Error
+			Find(&episodes, models.Episode{EpisodeStatus: models.EpisodeStatus_Published}).Error
+		if err != nil {
+			return nil, errors.New("episodes not found")
+		}
+		err = db.DB.Model(models.Episode{}).Where(models.Episode{EpisodeStatus: models.EpisodeStatus_Published}).Count(&count).Error
 		if err != nil {
 			return nil, errors.New("episodes not found")
 		}
 	} else {
 		if err := db.DB.Scopes(helpers.Paginate(pagination.PageIndex, pagination.PerPage)).
 			Order("create_time DESC").
-			Find(&episodes).
-			Count(&count).Error; err != nil {
+			Find(&episodes).Error; err != nil {
+			return nil, errors.New("episodes not found")
+		}
+		if err := db.DB.Model(models.Episode{}).Count(&count).Error; err != nil {
 			return nil, errors.New("episodes not found")
 		}
 	}

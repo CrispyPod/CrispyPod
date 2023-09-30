@@ -44,15 +44,16 @@
 		);
 
 		let json_resp = await result.json();
-		episodes = json_resp.data.episodes.items;
 		hasPreviousPage = json_resp.data.episodes.pageInfo.hasPreviousPage ?? false;
 		hasNextPage = json_resp.data.episodes.pageInfo.hasNextPage ?? false;
 		sum = json_resp.data.episodes.totalCount ?? 0;
+		episodes = json_resp.data.episodes.items;
 	}
 
-	function handlePageChange(pageIndex: number) {
+	async function handlePageChange(pageIndex: number) {
 		// curPage = pageIndex;
-		getEpisodes(pageIndex);
+		console.log(pageIndex);
+		await getEpisodes(pageIndex);
 	}
 </script>
 

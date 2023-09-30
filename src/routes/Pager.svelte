@@ -1,30 +1,44 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import PagerIndex from './PagerIndex.svelte';
 
 	let curPage: number = 0;
+	let firstLoaded: boolean = false;
 	export let perPage: number = 0;
 	export let sum: number = 0;
 	export let hasPreviousPage: boolean = false;
 	export let hasNextPage: boolean = false;
 
-	export let handlePageChange: (pageIndex: number) => any;
+	export let handlePageChange: (pageIndex: number) => Promise<any>;
 
 	let pageIndecies: number[] = [];
 
-	$: if (curPage && sum) onPageDataChanged();
+	$: if (curPage > -1) onPageDataChanged();
 
-	function onPageDataChanged() {
-		handlePageChange(curPage + 1);
+	$: sum && calculateIndicies();
+
+	function calculateIndicies() {
 		pageIndecies = [];
-		pageIndecies.push(curPage + 1);
+		const centerPage = curPage + 1;
+		pageIndecies.push(centerPage);
 		const maxPages = Math.ceil(sum / perPage);
 		for (let index = 1; index < 6 && pageIndecies.length < 5; index++) {
 			pageIndecies = [
-				curPage - index > 0 ? curPage - index : 0,
+				centerPage - index > 0 ? centerPage - index : 0,
 				...pageIndecies,
-				curPage + index <= maxPages ? curPage + index : 0
+				centerPage + index <= maxPages ? centerPage + index : 0
 			].filter((x) => x != 0);
 		}
+	}
+
+	async function onPageDataChanged() {
+		// console.log(sum);
+		if (!firstLoaded) {
+			firstLoaded = true;
+			return;
+		}
+		await handlePageChange(curPage + 1);
+		calculateIndicies();
 	}
 </script>
 
@@ -47,7 +61,9 @@
 				Showing
 				<span class="font-medium">{perPage * curPage}</span>
 				to
-				<span class="font-medium">{perPage * (curPage + 1)}</span>
+				<span class="font-medium"
+					>{perPage * (curPage + 1) > sum ? sum : perPage * (curPage + 1)}</span
+				>
 				of
 				<span class="font-medium">{sum}</span>
 				results
@@ -78,14 +94,14 @@
 				<!-- Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" -->
 
 				{#each pageIndecies as pi, i}
-					{#if pi == curPage}
+					{#if pi == curPage + 1}
 						<PagerIndex active={true} index={pi} />
 					{:else}
 						<PagerIndex
 							active={false}
 							index={pi}
 							handleClick={() => {
-								curPage = pi;
+								curPage = pi - 1;
 							}}
 						/>
 					{/if}

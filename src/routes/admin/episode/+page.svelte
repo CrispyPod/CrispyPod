@@ -60,9 +60,10 @@
 		// console.log(episodeArr);
 	});
 
-	function handlePageChange(pageIndex: number) {
+	async function handlePageChange(pageIndex: number) {
 		// curPage = pageIndex;
-		getPagedData(pageIndex - 1);
+		// console.log(pageIndex);
+		await getPagedData(pageIndex);
 	}
 </script>
 
