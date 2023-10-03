@@ -13,7 +13,7 @@
 			<EpisodeStatBadge episodeStatus={episode.episodeStatus} />
 		</div>
 	</div>
-	<div class="hidden sm:flex sm:flex-col sm:items-end">
+	<div class="sm:flex sm:flex-col sm:items-end">
 		<a class="sm:ml-3" href="/admin/episode/{episode.id}">
 			<button class="btn btn-active"> <Icon src={Pencil} size="16" />Edit</button>
 		</a>
