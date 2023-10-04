@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import type { Episode } from '$lib/models/episode';
 	import { siteConfigS } from '$lib/stores/siteConfigStore';
+	import Header from './Header.svelte';
 
 	let episodes: Array<Episode> | null = null;
 	let siteName: string = '';
@@ -54,23 +55,28 @@
 		sum = json_resp.data.episodes.totalCount ?? 0;
 	}
 </script>
+
 <svelte:head>
 	<title>{siteName}</title>
 </svelte:head>
 
-<SiteLayout>
-	<div class="hero w-full h-96 bg-base-200">
-		<div class="hero-content text-center">
-			<div class="max-w-md">
-				<h1 class="text-5xl font-bold">{siteName}</h1>
-				<p class="py-6">{siteDescription}</p>
-				<!-- <button class="btn btn-primary">Get Started</button> -->
+<SiteLayout showHeader={false}>
+	<div class="w-full h-screen">
+		<Header />
+		<div class="hero h-full">
+			<div class="hero-content text-center">
+				<div class="max-w-md">
+					<h1 class="text-5xl font-bold">{siteName}</h1>
+					<p class="py-6">{siteDescription}</p>
+					<!-- <button class="btn btn-primary">Get Started</button> -->
+				</div>
 			</div>
 		</div>
 	</div>
+	<div class="divider" />
 	{#if episodes != null}
 		<div class="container mx-auto mt-5">
-			Episodes
+			<div class="w-full flex justify-center">Episodes</div>
 			<PagedEpisodes {episodes} {hasNextPage} {hasPreviousPage} {sum} />
 		</div>
 	{/if}

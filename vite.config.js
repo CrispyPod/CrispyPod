@@ -6,6 +6,9 @@ export default defineConfig({
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	},
+	optimizeDeps: {
+		exclude: ['bytemd']
+	},
 	server: {
 		proxy: {
 			'/graphql': {
@@ -18,7 +21,7 @@ export default defineConfig({
 				changeOrigin: true,
 				rewrite: (path) => path.replace(/^\/api/, '')
 			},
-			'/rss':{
+			'/rss': {
 				target: 'http://localhost:8080/rss',
 				changeOrigin: true,
 				rewrite: (path) => path.replace(/^\/rss/, '')

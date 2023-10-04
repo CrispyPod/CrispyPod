@@ -4,11 +4,31 @@
 	import { token } from '$lib/stores/tokenStore';
 	import { get } from 'svelte/store';
 
+	import { Editor, Viewer } from 'bytemd';
+	import gfm from '@bytemd/plugin-gfm';
+	import 'bytemd/dist/index.css';
+
+	let value = '';
+	const plugins = [
+		gfm()
+		// Add more plugins here
+	];
+
+	function handleChange(e: any) {
+		value = e.detail.value;
+		errMessage = null;
+	}
+
 	export let episodeData: Episode | null;
 	export let handleNext: (e: Episode) => any;
 
 	let errMessage: string | null = null;
 	async function onFormSubmit(e: SubmitEvent) {
+		if (value.length == 0) {
+			errMessage = 'Please type in description of this episode.';
+			return;
+		}
+
 		const form: HTMLFormElement | null = document.querySelector('#newEpisodeForm');
 		const formData = new FormData(form!);
 
@@ -18,7 +38,7 @@
 			`mutation{createEpisode(input: {title:"` +
 				encodeURIComponent(formData.get('title')!.toString()) +
 				`",description:"` +
-				encodeURIComponent(formData.get('description')!.toString()) +
+				encodeURIComponent(value) +
 				`"}){id,title,description}}`
 		);
 		const resultJson = await result.json();
@@ -48,13 +68,16 @@
 
 		<label for="description" class="label-text mt-4">Description</label>
 		<div class="mt-2">
-			<textarea
+			<div class="w-full">
+				<Editor {value} {plugins} on:change={handleChange} />
+			</div>
+			<!-- <textarea
 				required
 				id="description"
 				name="description"
 				rows="3"
 				class="textarea textarea-bordered w-full"
-			/>
+			/> -->
 		</div>
 	</div>
 
@@ -68,3 +91,9 @@
 		<button type="submit" class="btn btn-active btn-primary">Next</button>
 	</div>
 </form>
+
+<style>
+	div :global(.bytemd) {
+		z-index: 50;
+	}
+</style>

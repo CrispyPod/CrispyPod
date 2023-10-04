@@ -20,7 +20,7 @@
 </svelte:head>
 
 <SiteLayout>
-	<div class="hero w-full h-96 bg-base-200">
+	<div class="hero w-full h-96">
 		<div class="hero-content text-center">
 			<div class="max-w-md">
 				<!-- <h1 class="text-5xl font-bold">{siteConfig == null ? '' : siteConfig.siteName}</h1> -->

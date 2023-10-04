@@ -1,8 +1,12 @@
 <script>
 	import Header from './Header.svelte';
+
+	export let showHeader = true;
 </script>
 
-<Header />
+{#if showHeader}
+	<Header />
+{/if}
 <!-- <div class="container mx-auto"> -->
-	<slot />
+<slot />
 <!-- </div> -->

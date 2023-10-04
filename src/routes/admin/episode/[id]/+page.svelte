@@ -9,6 +9,21 @@
 	import type { AudioFile } from '$lib/models/audioFile';
 	import WaveForm from '../../../WaveForm.svelte';
 
+	import { Editor, Viewer } from 'bytemd';
+	import gfm from '@bytemd/plugin-gfm';
+	import 'bytemd/dist/index.css';
+
+	let value = '';
+	const plugins = [
+		gfm()
+		// Add more plugins here
+	];
+
+	function handleChange(e: any) {
+		value = e.detail.value;
+		errMessage = null;
+	}
+
 	let fetchedEpisode: Episode;
 	let errMessage: string | null = null;
 
@@ -45,6 +60,7 @@
 		const jsonResp = await result.json();
 		if (jsonResp.data != null) {
 			fetchedEpisode = jsonResp.data.episode;
+			value = fetchedEpisode.description;
 		}
 	});
 
@@ -54,6 +70,11 @@
 	let handlePopupConfirm: () => void = () => {};
 
 	async function handleSubmit(e: SubmitEvent, episodeData: Episode) {
+		if (value.length == 0) {
+			errMessage = 'Please type in description of this episode.';
+			return;
+		}
+
 		const form: HTMLFormElement | null = document.querySelector('#modifyEpisodeForm');
 		const formData = new FormData(form!);
 		const toeknS = get(token);
@@ -77,7 +98,7 @@
 				`",input: {title:"` +
 				encodeURIComponent(formData.get('title')!.toString()) +
 				`",description:"` +
-				encodeURIComponent(formData.get('description')!.toString()) +
+				encodeURIComponent(value) +
 				`",episodeStatus:` +
 				stat +
 				audioFileField +
@@ -189,14 +210,10 @@
 			<label class="label" for="description">
 				<span class="label-text">Description</span>
 			</label>
-			<textarea
-				required
-				id="description"
-				name="description"
-				rows="3"
-				value={fetchedEpisode == null ? '' : fetchedEpisode.description}
-				class="textarea textarea-bordered h-24 w-full"
-			/>
+
+			<div class="w-full">
+				<Editor {value} {plugins} on:change={handleChange} />
+			</div>
 		</div>
 
 		<div class="form-control mt-5">
@@ -290,3 +307,9 @@
 		</div>
 	</dialog>
 {/if}
+
+<style>
+	div :global(.bytemd) {
+		z-index: 50;
+	}
+</style>
