@@ -154,7 +154,7 @@
 				<li>
 					<a class="justify-between" href="/admin/profile">
 						Profile
-						<span class="badge">New</span>
+						<!-- <span class="badge">New</span> -->
 					</a>
 				</li>
 				<li><a href="/admin/site-setting">Settings</a></li>

@@ -1,16 +1,37 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import AdminLayout from '../../AdminLayout.svelte';
-	import EpisodeForm from '../EpisodeForm.svelte';
 	import { graphqlRequest } from '$lib/graphqlRequest';
 	import { get } from 'svelte/store';
 	import { token } from '$lib/stores/tokenStore';
-	import type { Episode } from '$lib/models/episode';
+	import { EpisodeState, type Episode } from '$lib/models/episode';
 	import { goto } from '$app/navigation';
 	import type { AudioFile } from '$lib/models/audioFile';
+	import WaveForm from '../../../WaveForm.svelte';
 
 	let fetchedEpisode: Episode;
 	let errMessage: string | null = null;
+
+	onMount(() => {
+		(document!.getElementById('afUpload') as HTMLInputElement)!.value = '';
+	});
+
+	$: if (fetchedEpisode) {
+		if (fetchedEpisode == null) {
+			fileUploadedAndNotSaved = true;
+		}
+	}
+
+	let fileList: FileList;
+	// Note that `fileList` is of type `FileList`, not an Array:
+	// https://developer.mozilla.org/en-US/docs/Web/API/FileList
+	let fileUploadedAndNotSaved = false;
+
+	function fileListChanged() {
+		startUpload();
+	}
+
+	$: fileList && fileListChanged();
 
 	export let data;
 	onMount(async () => {
@@ -33,7 +54,7 @@
 	let handlePopupConfirm: () => void = () => {};
 
 	async function handleSubmit(e: SubmitEvent, episodeData: Episode) {
-		const form: HTMLFormElement | null = document.querySelector('#newEpisodeForm');
+		const form: HTMLFormElement | null = document.querySelector('#modifyEpisodeForm');
 		const formData = new FormData(form!);
 		const toeknS = get(token);
 
@@ -107,13 +128,147 @@
 			}
 		}
 	}
+
+	function handleForm(e: SubmitEvent) {
+		handleSubmit(e, fetchedEpisode);
+	}
+
+	function handleReupload() {
+		fetchedEpisode!.audioFileName = null;
+		fetchedEpisode!.audioFileUploadName = null;
+	}
+
+	async function startUpload() {
+		let file = fileList.item(0);
+		const tokenS = get(token);
+		// console.log(tokenS);
+
+		let data = new FormData();
+		data.append('file', file!);
+		data.append('episodeId', fetchedEpisode.id);
+		let resp = await fetch('/api/audioFile', {
+			method: 'POST',
+			headers: [['Authorization', 'Bearer ' + tokenS]],
+			body: data
+		});
+
+		if (resp.status != 200) {
+			// TODO: show popup
+		}
+
+		let audioFile: AudioFile = await resp.json();
+
+		fetchedEpisode!.audioFileName = audioFile.audioFileName;
+		fetchedEpisode!.audioFileUploadName = file?.name!;
+		// fetchedEpisode!.audioFileDuration = audioFile.audioFileDuration;
+		fileUploadedAndNotSaved = true;
+	}
 </script>
 
 <AdminLayout pageTitle="Edit episode">
 	<span slot="actions">
 		<button class="btn btn-error" on:click|preventDefault={handleDelete}>Delete</button>
 	</span>
-	<EpisodeForm {handleSubmit} episodeData={fetchedEpisode} {errMessage} />
+	<!-- <EpisodeForm {handleSubmit} episodeData={fetchedEpisode} {errMessage} /> -->
+	<form id="modifyEpisodeForm" on:submit|preventDefault={handleForm}>
+		<div class="form-control">
+			<label class="label" for="title">
+				<span class="label-text">Title</span>
+			</label>
+			<input
+				required
+				id="title"
+				name="title"
+				type="text"
+				value={fetchedEpisode == null ? '' : fetchedEpisode.title}
+				class="input input-bordered w-full max-w-xs"
+			/>
+		</div>
+
+		<div class="form-control w-full">
+			<label class="label" for="description">
+				<span class="label-text">Description</span>
+			</label>
+			<textarea
+				required
+				id="description"
+				name="description"
+				rows="3"
+				value={fetchedEpisode == null ? '' : fetchedEpisode.description}
+				class="textarea textarea-bordered h-24 w-full"
+			/>
+		</div>
+
+		<div class="form-control mt-5">
+			{#if fetchedEpisode == null || fetchedEpisode.audioFileName == null || fetchedEpisode.audioFileName.length == 0}
+				<div>
+					<p>Upload audio file</p>
+					<input
+						id="afUpload"
+						type="file"
+						bind:files={fileList}
+						class="file-input file-input-bordered w-full max-w-xs"
+					/>
+				</div>
+			{:else}
+				{#if fileUploadedAndNotSaved}
+					Please hit save so that changes are committed.
+				{/if}
+				<WaveForm fileUrl="/api/audioFile/{fetchedEpisode.audioFileName}" />
+
+				<div class="w-full flex mt-2">
+					<button
+						class="btn btn-outline btn-secondary ml-auto"
+						on:click|preventDefault={handleReupload}>Reuplaod</button
+					>
+				</div>
+			{/if}
+		</div>
+
+		<div class="divider" />
+
+		<div class="form-control max-w-xs">
+			<label class="label cursor-pointer">
+				<span class="label-text">Draft</span>
+				<input
+					required
+					id="status-draft"
+					name="status"
+					type="radio"
+					value="0"
+					checked={fetchedEpisode != null && fetchedEpisode.episodeStatus == EpisodeState.draft}
+					class="radio checked:bg-neutral"
+				/>
+			</label>
+			<label class="label cursor-pointer">
+				<span class="label-text">Published</span>
+				<input
+					required
+					id="status-draft"
+					name="status"
+					type="radio"
+					value="1"
+					checked={fetchedEpisode != null && fetchedEpisode.episodeStatus == EpisodeState.published}
+					class="radio checked:bg-accent"
+				/>
+			</label>
+		</div>
+
+		<div class="mt-6 flex items-center justify-end gap-x-6">
+			{#if errMessage != null}
+				<div class="mr-auto">
+					<div
+						class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+						role="alert"
+					>
+						<strong class="font-bold">{errMessage}</strong>
+					</div>
+				</div>
+			{/if}
+			<a href="/admin/episode" type="button" class="btn btn-active">Cancel</a>
+			<button type="submit" class="btn btn-active btn-primary">Save</button>
+		</div>
+	</form>
 </AdminLayout>
 
 {#if fetchedEpisode != null}

@@ -73,7 +73,7 @@
 					<div class="card-body">
 						<h2 class="card-title">
 							{e.title}
-							<div class="badge badge-secondary">NEW</div>
+							<!-- <div class="badge badge-secondary">NEW</div> -->
 						</h2>
 						<div class="card-actions justify-end">
 							<div class="badge badge-outline">{new Date(e.createTime).toLocaleDateString()}</div>
