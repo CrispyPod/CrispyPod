@@ -9,7 +9,7 @@ export class Episode {
 	id: string;
 	title: string;
 	description: string;
-	createTime: Date;
+	createTime: number;
 	publishTime: Date | null;
 	episodeStatus: EpisodeState;
 	// audioFiles: AudioFile[] = [];
@@ -26,7 +26,7 @@ export class Episode {
 		id: string,
 		title: string,
 		description: string,
-		createTime: Date,
+		createTime: number,
 		episodeStatus: EpisodeState,
 		publishTime: Date | null
 	) {

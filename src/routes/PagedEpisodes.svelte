@@ -76,7 +76,7 @@
 							<!-- <div class="badge badge-secondary">NEW</div> -->
 						</h2>
 						<div class="card-actions justify-end">
-							<div class="badge badge-outline">{new Date(e.createTime).toLocaleDateString()}</div>
+							<div class="badge badge-outline">{new Date(e.createTime*1000).toLocaleDateString()}</div>
 						</div>
 					</div>
 				</div>
