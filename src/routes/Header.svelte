@@ -14,7 +14,7 @@
 
 <div class="navbar">
 	<div class="flex-1">
-		<a class="btn btn-ghost normal-case text-xl text-primary-focus" href="/">{siteName}</a>
+		<a class="btn btn-ghost normal-case text-xl" href="/">{siteName}</a>
 	</div>
 	<div class="flex-none">
 		<ul class="menu menu-horizontal px-1">
