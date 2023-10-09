@@ -7,6 +7,7 @@
 	import { Editor, Viewer } from 'bytemd';
 	import gfm from '@bytemd/plugin-gfm';
 	import 'bytemd/dist/index.css';
+	import 'github-markdown-css/github-markdown.css';
 
 	let value = '';
 	const plugins = [

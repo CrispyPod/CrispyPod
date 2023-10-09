@@ -12,9 +12,9 @@
 	});
 </script>
 
-<div class="navbar bg-base-100">
+<div class="navbar">
 	<div class="flex-1">
-		<a class="btn btn-ghost normal-case text-xl text-indigo-600" href="/">{siteName}</a>
+		<a class="btn btn-ghost normal-case text-xl text-primary-focus" href="/">{siteName}</a>
 	</div>
 	<div class="flex-none">
 		<ul class="menu menu-horizontal px-1">

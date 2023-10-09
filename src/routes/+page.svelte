@@ -61,7 +61,7 @@
 </svelte:head>
 
 <SiteLayout showHeader={false}>
-	<div class="w-full h-screen">
+	<div class="w-full h-screen bg-gradient-to-r from-cyan-500 to-blue-500 text-base-100">
 		<Header />
 		<div class="hero h-full">
 			<div class="hero-content text-center">
@@ -73,7 +73,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="divider" />
+	<!-- <div class="divider" /> -->
 	{#if episodes != null}
 		<div class="container mx-auto mt-5">
 			<div class="w-full flex justify-center">Episodes</div>

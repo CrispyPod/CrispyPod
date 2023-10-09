@@ -7,10 +7,14 @@
 	import type { SiteConfig } from '$lib/models/siteConfig';
 	import { siteConfigS } from '$lib/stores/siteConfigStore';
 	import { get } from 'svelte/store';
+	import { Viewer } from 'bytemd';
+	import gfm from '@bytemd/plugin-gfm';
+	import 'github-markdown-css/github-markdown.css';
 
 	let episodeData: Episode;
 	let siteConfig: SiteConfig;
 	export let data;
+	const plugins = [gfm()];
 
 	onMount(async () => {
 		await siteConfigS.init();
@@ -58,8 +62,25 @@
 				</div>
 			</div>
 		{/if}
-		<p class="m-10">
-			{episodeData.description}
-		</p>
+		<article class="markdown-body">
+			<Viewer value={episodeData.description} {plugins} />
+		</article>
+		<!-- {episodeData.description} -->
 	{/if}
 </SiteLayout>
+
+<style>
+	.markdown-body {
+		box-sizing: border-box;
+		/* min-width: 200px;
+		max-width: 980px; */
+		margin: 0 auto;
+		padding: 45px;
+	}
+
+	@media (max-width: 767px) {
+		.markdown-body {
+			padding: 15px;
+		}
+	}
+</style>
