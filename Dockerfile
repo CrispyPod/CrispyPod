@@ -1,5 +1,8 @@
 FROM golang:1.21-alpine
 WORKDIR /src
+COPY go.mod go.sum  ./
+RUN go mod download -x
+COPY main.go  ./
 COPY controllers ./controllers
 COPY db ./db
 COPY graph ./graph
@@ -8,8 +11,7 @@ COPY helpers ./helpers
 COPY rssfeed ./rssfeed
 COPY tools ./tools
 COPY schedule ./schedule
-COPY main.go go.mod go.sum gqlgen.yml ./
-RUN go mod tidy && go build -o /bin/crispypod
+RUN go build -o /bin/crispypod
 
 FROM node:18-alpine
 COPY --from=0 /bin/crispypod /bin/crispypod
