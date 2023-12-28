@@ -1,0 +1,43 @@
+version: '3.7'
+networks:
+  db:
+volumes:
+  crispypod-files:
+  crispypod-db:
+
+services:
+  app:
+    image: crispypod/app:latest
+    container_name: app
+    hostname: app
+    environment:
+      - DB_HOST=pgsql
+      - DB_NAME=crispypod
+      - DB_USER=crispypod
+      - DB_PASSWORD=crispypod
+      - BACK_END_URL=http://localhost:8080
+    ports:
+      - 3000:3000
+    networks:
+      - db
+    volumes:
+      - crispypod-files:/crispypod/UploadFiles
+    depends_on:
+      - pgsql
+
+  pgsql:
+    image: postgres:15-alpine
+    hostname: pgsql
+    container_name: pgsql
+    restart: always
+    volumes:
+      - crispypod-db:/var/lib/postgresql/data
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_INITDB_ARGS=--data-checksums
+      - POSTGRES_DB=crispypod
+      - POSTGRES_USER=crispypod
+      - POSTGRES_PASSWORD=crispypod
+    networks:
+      - db
+    

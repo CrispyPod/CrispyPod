@@ -1,0 +1,55 @@
+version: '3.7'
+networks:
+  db:
+  apps:
+volumes:
+  crispypod-files:
+  crispypod-db:
+
+services:
+  frontend:
+    image: crispypod/frontend:latest
+    container_name: frontend
+    hostname: frontend
+    ports:
+      - 3000:3000
+    environment:
+      - BACK_END_URL=http://backend:8080
+    networks:
+      - apps
+    depends_on:
+      - backend
+
+  backend:
+    image: crispypod/backend:latest
+    container_name: backend
+    hostname: backend
+    environment:
+      - DB_HOST=pgsql
+      - DB_NAME=crispypod
+      - DB_USER=crispypod
+      - DB_PASSWORD=crispypod
+    networks:
+      - apps
+      - db
+    volumes:
+      - crispypod-files:/crispypod/UploadFiles
+    depends_on:
+      - pgsql
+
+  pgsql:
+    image: postgres:15-alpine
+    hostname: pgsql
+    container_name: pgsql
+    restart: always
+    volumes:
+      - crispypod-db:/var/lib/postgresql/data
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_INITDB_ARGS=--data-checksums
+      - POSTGRES_DB=crispypod
+      - POSTGRES_USER=crispypod
+      - POSTGRES_PASSWORD=crispypod
+    networks:
+      - db
+    

@@ -5,7 +5,7 @@ export GIN_MODE=release
 crispypod &
 
 # start front end
-node build/index.js &
+node build-node/index.js &
 
 wait -n
 
