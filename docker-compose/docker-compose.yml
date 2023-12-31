@@ -8,7 +8,7 @@ volumes:
 
 services:
   frontend:
-    image: crispypod/frontend:latest
+    image: ghcr.io/crispypod/frontend:latest
     container_name: frontend
     hostname: frontend
     ports:
@@ -21,7 +21,7 @@ services:
       - backend
 
   backend:
-    image: crispypod/backend:latest
+    image: ghcr.io/crispypod/backend:latest
     container_name: backend
     hostname: backend
     environment:

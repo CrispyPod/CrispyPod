@@ -7,7 +7,7 @@ volumes:
 
 services:
   app:
-    image: crispypod/app:latest
+    image: ghcr.io/crispypod/crispypod:latest
     container_name: app
     hostname: app
     environment:
