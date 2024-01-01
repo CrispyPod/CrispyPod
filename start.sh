@@ -1,12 +1,14 @@
-#!/bin/sh
-export GIN_MODE=release
+#!/bin/bash
 
-# start crispypod
+# turn on bash's job control
+set -m
+
+# Start backend and put it in background
 crispypod &
 
-# start front end
-node build-node/index.js &
+# Start frontend
+node build-node/index.js
 
-wait -n
-
-exit $?
+# now we bring the front end back into the foreground
+# and leave it there
+fg %1
