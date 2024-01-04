@@ -7,7 +7,7 @@ set -m
 crispypod &
 
 # Start frontend
-node build-node/index.js
+node start-server.js
 
 # now we bring the front end back into the foreground
 # and leave it there

@@ -12,7 +12,7 @@ ENV BACK_END_URL="http://localhost:8080"
 ENV SRC_FOLDER="/src/frontend"
 RUN cd frontend && npm install && npm run build
 WORKDIR /crispypod
-RUN cp -r /src/frontend/build-node /src/frontend/package.json /src/frontend/node_modules /crispypod
+RUN cp -r /src/frontend/build-node /src/frontend/package.json /src/frontend/node_modules /src/frontend/start-server.js /crispypod
 VOLUME [ "/crispypod/UploadFile" ]
 COPY start.sh start.sh
 CMD ["sh","/crispypod/start.sh"]
