@@ -21,7 +21,7 @@ services:
     networks:
       - db
     volumes:
-      - crispypod-files:/crispypod/UploadFiles
+      - crispypod-files:/crispypod/UploadFile
     depends_on:
       - pgsql
 
