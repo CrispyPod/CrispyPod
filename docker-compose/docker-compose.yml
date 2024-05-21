@@ -25,31 +25,10 @@ services:
     container_name: backend
     hostname: backend
     environment:
-      - DB_HOST=pgsql
-      - DB_NAME=crispypod
-      - DB_USER=crispypod
-      - DB_PASSWORD=crispypod
+      - DISABLE_PB_WEBUI=1
     networks:
       - apps
-      - db
     volumes:
-      - crispypod-files:/crispypod/UploadFile
-    depends_on:
-      - pgsql
+      - crispypod-files:/crispypod/pb_data
 
-  pgsql:
-    image: postgres:15-alpine
-    hostname: pgsql
-    container_name: pgsql
-    restart: always
-    volumes:
-      - crispypod-db:/var/lib/postgresql/data
-    environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_INITDB_ARGS=--data-checksums
-      - POSTGRES_DB=crispypod
-      - POSTGRES_USER=crispypod
-      - POSTGRES_PASSWORD=crispypod
-    networks:
-      - db
     
