@@ -1,10 +1,8 @@
 version: '3.7'
 networks:
-  db:
   apps:
 volumes:
   crispypod-files:
-  crispypod-db:
 
 services:
   frontend:
