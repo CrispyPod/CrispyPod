@@ -4,7 +4,7 @@
 set -m
 
 # Start backend and put it in background
-crispypod &
+/crispypod/crispypod serve --http=0.0.0.0:8080 &
 
 # Start frontend
 node start-server.js
