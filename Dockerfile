@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine
+FROM golang:1.23-alpine
 WORKDIR /src
 COPY backend/main.go backend/go.mod backend/go.sum  ./
 COPY backend/migrations ./migrations
@@ -11,7 +11,7 @@ WORKDIR /crispypod
 COPY --from=0 /bin/crispypod ./
 WORKDIR /src
 COPY frontend frontend
-ENV PUBLIC_PB_ENDPOINT="http://localhost:8080"
+ENV PUBLIC_PB_ENDPOINT="http://localhost:8080/"
 ENV SRC_FOLDER="/src"
 ENV PUBLIC_BUILD_STATIC=0
 ENV DISABLE_PB_WEBUI=1
